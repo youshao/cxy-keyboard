@@ -1,9 +1,5 @@
 const styles = require('./index.scss');
 
-// document.documentElement.addEventListener('touchstart', function () {
-//     // 处理IOS在点击时 css的伪类:active无效
-// });
-
 class CxyKeyboard {
 
     /**
@@ -177,7 +173,7 @@ class CxyKeyboard {
      * @param {element} e 点击的element对象
      */
     handleCLick(e) {
-        window.t = e.target.attributes;
+        e.preventDefault();
         const { attributes } = e.target;
         let hideKeyboard = false; // 隐藏键盘
         let isClickKeyboard = false; // 当前操作是点击键盘
