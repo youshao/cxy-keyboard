@@ -1,0 +1,121 @@
+.hide{
+    display: none;
+}
+
+.keyboard{
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    *{
+        -webkit-tap-highlight-color: rgba(255,0,0,0); // 取消手机端 点击时会出现边框
+        user-select: none; // 禁止选中
+    }
+}
+
+.bg{
+    position: absolute;
+    left: 0;
+    top: -100px;
+    right: 0;
+    bottom: -100px;
+    background: rgba(0, 0,0,.3);
+}
+
+.keys{
+    position: absolute;
+    left: 50%;
+    right: 0;
+    bottom: 0;
+    padding-top: 10px;
+    height: 430px;
+    width: 750px;
+    transform: translateX(-50%);
+    background: #d1d5da;
+    color: #000;
+    z-index: 2;
+    
+    &::after{
+        content: '';
+        display: block;
+        position: absolute;
+        left: -100%;
+        right: -100%;
+        bottom: 0;
+        height: 100%;
+        background: #d1d5da;
+        z-index: -1;
+    }
+}
+
+// 显示键盘动画
+.showKeys{
+    animation: showKeyboard .3s;
+}
+// 隐藏键盘动画
+.hideKeys{
+    .bg{
+        display: none;
+    }
+    .keys{
+        animation: hideKeyboard .3s forwards;
+    }
+}
+@keyframes showKeyboard{
+    0%{
+        bottom: -450px;
+    }
+    100%{
+        bottom: 0;
+    }
+}
+
+@keyframes hideKeyboard{
+    0%{
+        bottom: 0;
+    }
+    100%{
+        bottom: -450px;
+    }
+}
+
+.key{
+    float: left;
+    position: relative;
+    margin: 10px 5px;
+    height: 85px;
+    width: 65px;
+    background: #fff;
+    font-size: 40px;
+    color: #000;
+    text-align: center;
+    line-height: 85px;
+    border-radius: 10px;
+    box-shadow: 0 1PX #909396;
+    cursor: pointer;
+}
+.key:active{
+    top: 1PX;
+    background: #c0c1c6;
+    box-shadow: 0 -1PX #909396;
+}
+.aBox{
+    margin-left: 40px;
+}
+
+.abcBox,.delBtn,.backBtn{
+    background: #adb3bc;
+    width: 102.5px;
+    font-size: 36px;
+}
+.delBtn{
+    margin-right: 0;
+    background: #adb3bc url("./images/svg/del.svg") no-repeat center center;
+    background-size: 48px;
+}
+.delBtn:active{
+    background: #c0c1c6 url("./images/svg/del-click.svg") no-repeat center center;
+    background-size: 48px;
+}
