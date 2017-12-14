@@ -1,3 +1,4 @@
+
 .hide{
     display: none;
 }
@@ -5,7 +6,6 @@
 .keyboard{
     position: fixed;
     left: 0;
-    top: 0;
     right: 0;
     bottom: 0;
     z-index: 9999;
@@ -16,12 +16,12 @@
 }
 
 .bg{
-    position: absolute;
+    position: fixed;
     left: 0;
     top: -100px;
     right: 0;
     bottom: -100px;
-    background: rgba(0, 0,0,.3);
+    z-index: 1;
 }
 
 .keys{
@@ -63,24 +63,11 @@
         animation: hideKeyboard .3s forwards;
     }
 }
-@keyframes showKeyboard{
-    0%{
-        bottom: -450px;
-    }
-    100%{
-        bottom: 0;
-    }
-}
 
-@keyframes hideKeyboard{
-    0%{
-        bottom: 0;
-    }
-    100%{
-        bottom: -450px;
-    }
+.keyItem{
+    float: left;
+    overflow: hidden;
 }
-
 .key{
     float: left;
     position: relative;
@@ -118,4 +105,92 @@
 .delBtn:active{
     background: #c0c1c6 url("./images/svg/del-click.svg") no-repeat center center;
     background-size: 48px;
+}
+
+.keyValueBox{
+    margin: 0;
+    padding: 0;
+    line-height: inherit;
+    color: inherit;
+    font-size: inherit;
+    overflow: hidden;
+}
+.keyValueBoxCursor{
+    position: relative;
+    &::after{
+        content: '';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 1PX;
+        background: #108ee9;
+        animation: cursor 1s infinite linear;
+    }
+}
+// 单个按键的内容
+.keyValueItem{
+    position: relative;
+    float: left;
+    line-height: inherit;
+    color: inherit;
+    font-size: inherit;
+}
+// 光标
+.cursor{
+    &::after{
+        content: '';
+        display: block;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 1PX;
+        background: #108ee9;
+        animation: cursor 1s infinite linear;
+    }
+}
+// 光标在左边显示
+.leftCursor{
+    &::after{
+        right: auto;
+        left: 0;
+    }
+}
+
+// 动画
+@keyframes showKeyboard{
+    0%{
+        bottom: -450px;
+    }
+    100%{
+        bottom: 0;
+    }
+}
+
+@keyframes hideKeyboard{
+    0%{
+        bottom: 0;
+    }
+    100%{
+        bottom: -450px;
+    }
+}
+@keyframes cursor{
+    0%{
+        background: #108ee9;
+    }
+    40%{
+        background: #108ee9;
+    }
+    50%{
+        background: transparent;
+    }
+    90%{
+        background: transparent;
+    }
+    100%{
+        background: #108ee9;
+    }
 }

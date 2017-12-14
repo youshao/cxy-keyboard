@@ -2,20 +2,40 @@ import CxyKeyboard from './keyboard/index';
 
 const btn = () => {
   const btn = document.createElement('div');
-  btn.addEventListener('click', () => {
-    const cxyKeyboard = new CxyKeyboard();
-    window.cxyKeyboard = cxyKeyboard;
-    cxyKeyboard.show({
-      type: 'carNumberPre', //  ABC：字母数据键盘；carNumberPre：车牌前缀键盘
-      value: '', // 当前输入的内容
-      animation: true, // 显示动画 默认：true
-    });
-    cxyKeyboard.onChange = (value) => console.log("接收到的参数：", value)
-  })
-  btn.innerHTML = '点击显示键盘';
-  document.body.append(btn);
-}
 
+  // 绑定点击事件
+  btn.addEventListener('touchstart', e => {
+    // 显示键盘
+    cxyKeyboard.show(Object.assign({}, {
+      domId: '#inputId',
+      type: 'carNumberPre', //  ABC：字母数据键盘；carNumberPre：车牌前缀键盘
+      placeholder: 'testadsga',
+    }, window.showParam));
+
+    // 内容发生变化
+    cxyKeyboard.onChange = (value) => {
+      window.showParam = { value };
+    };
+
+    // 光标发生变化
+    cxyKeyboard.cursorChange = cursorIndex => {
+      window.showParam = Object.assign(window.showParam, { cursorIndex });
+    };
+  })
+
+  btn.className = 'js-keyboardHandle'; // 点击不会关闭键盘的标识符
+  btn.innerHTML = `输入的内容：<span id="inputId"></span>`;
+  document.body.appendChild(btn);
+
+  // 示例话 需要放在节点渲染后 否则无法设置placeholder
+  const cxyKeyboard = new CxyKeyboard({
+    placeholders: [{
+      domId: '#inputId',
+      placeholder: 'testadsga'
+    }]
+  });
+  window.cxyKeyboard = cxyKeyboard;
+}
 btn();
 
 

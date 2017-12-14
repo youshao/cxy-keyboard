@@ -36,7 +36,11 @@ const config = {
     devServer: {
         contentBase: path.resolve(__dirname, 'dist'),
         port: '8888',
-        hot: true
+        hot: true,
+        host: '0.0.0.0',
+        allowedHosts: [
+            'weichao.cx580.com',
+        ]
     },
 
     module: {
