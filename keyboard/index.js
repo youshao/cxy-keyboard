@@ -480,10 +480,8 @@ class CxyKeyboard {
      * 初始placeholders
      */
     placeholdersInit(placeholders) {
-        console.log('placeholders:', placeholders)
         if (placeholders && placeholders.length > 0) {
             placeholders.map(item => {
-                console.log(item)
                 const { domId, placeholder, placeholderColor = '#ccc' } = item;
                 const dom = this.getInputDom(domId);
                 if (dom) {
@@ -499,7 +497,6 @@ class CxyKeyboard {
                     dom.innerHTML = ''; // 清空内容
                     dom.appendChild(p); // 显示输入的内容
                 }
-                console.log("dom:", dom)
                 return dom;
             })
         }
