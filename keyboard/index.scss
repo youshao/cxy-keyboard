@@ -7,6 +7,16 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     display: none;
 }
 
+// 透明背景 用于兼容在UIwebView下 点击空白处时 document.documentElement.addEventListener监听无效
+.transparentBg{
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -9;
+}
+
 .keyboard{
     *{
         -webkit-tap-highlight-color: rgba(255,0,0,0); // 取消手机端 点击时会出现边框
@@ -110,7 +120,7 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 .keyValueBox{
     margin: 0;
     padding: 0;
-    line-height: inherit;
+    line-height: 1.5;
     color: inherit;
     font-size: inherit;
     overflow: hidden;

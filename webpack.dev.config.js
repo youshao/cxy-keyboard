@@ -9,11 +9,10 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const pxtorem = require('postcss-pxtorem');
 
 const config = {
-    entry: {
+    entry: [
         // 文件入口配置
-        main: './index.js'
-        // main: './keyboard/index.js'
-    },
+        './index.js',
+    ],
 
     output: {
         // 文件输出配置
@@ -47,7 +46,13 @@ const config = {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                use: 'babel-loader',
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['env'],
+                        plugins: ['transform-runtime']
+                    }
+                },
                 exclude: /node_modules/,
             },
             {

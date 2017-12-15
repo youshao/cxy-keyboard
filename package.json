@@ -1,6 +1,6 @@
 {
   "name": "cxy-keyboard",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "H5业务使用的违章键盘",
   "main": "./keyboard/index.js",
   "scripts": {
@@ -22,6 +22,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",

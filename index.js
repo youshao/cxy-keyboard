@@ -7,7 +7,7 @@ const btn = () => {
   btn.addEventListener('touchstart', e => {
     // 显示键盘
     cxyKeyboard.show(Object.assign({}, {
-      domId: '#inputId',
+      selectors: '#inputId',
       type: 'carNumberPre', //  ABC：字母数据键盘；carNumberPre：车牌前缀键盘
       placeholder: 'testadsga',
     }, window.showParam));
@@ -30,7 +30,7 @@ const btn = () => {
   // 示例话 需要放在节点渲染后 否则无法设置placeholder
   const cxyKeyboard = new CxyKeyboard({
     placeholders: [{
-      domId: '#inputId',
+      selectors: '#inputId',
       placeholder: 'testadsga'
     }]
   });

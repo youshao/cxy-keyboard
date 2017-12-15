@@ -8,7 +8,7 @@
             "transform-runtime",
             {
                 "helpers": false,
-                "polyfill": false,
+                "polyfill": true, // 兼容低版本浏览器不支持ES6语法
                 "regenerator": true,
                 "moduleName": "babel-runtime"
             }
