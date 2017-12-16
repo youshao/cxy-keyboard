@@ -104,6 +104,17 @@ const config = {
                     }
                 ]
             },
+            {
+                test: /\.(gif|jpe?g|png|ico)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 10000
+                        }
+                    }
+                ]
+            },
         ]
     },
 

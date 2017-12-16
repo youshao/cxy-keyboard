@@ -33,8 +33,15 @@ class CxyKeyboard {
         // 键盘输入的内容
         this.value = '';
 
-        // 非输入内容 过滤返回键、删除键、键盘切换键
-        this.excludeValue = ['BACK', 'DEL', 'ABC'];
+        // 过滤功能按键
+        this.excludeValue = [
+            'BACK', // 返回键
+            'DEL', // 删除键
+            'ABC', // ABC键盘切换键
+            'NONE', // 空白键
+            'SWITCH_url', // url小写键盘切换键
+            'SWITCH_URL', // URL大写键盘切换键
+        ];
 
         // 显示键盘时的接收到的参数
         this.showParam = {};
@@ -79,11 +86,56 @@ class CxyKeyboard {
      */
     defaultKeys() {
         return {
+            // 数字键盘
+            number: ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'NONE', '0', 'DEL'].map(item => {
+                switch (item) {
+                    case 'NONE':
+                        return {
+                            name: item,
+                            value: '',
+                            className: styles.noneBtn
+                        }
+                    case 'DEL':
+                        return {
+                            name: item,
+                            value: '',
+                            className: styles.delBtn
+                        }
+                    default:
+                        return {
+                            name: item,
+                            value: item,
+                        }
+                }
+            }),
+
+            // 带小数点的数字键盘
+            digit: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'DEL']
+                .map(item => item === 'DEL' ? ({
+                    name: item,
+                    value: '',
+                    className: styles.delBtn
+                }) : ({
+                    name: item,
+                    value: item,
+                })),
+
+            // 身份证键盘
+            idcard: ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'X', '0', 'DEL']
+                .map(item => item === 'DEL' ? ({
+                    name: item,
+                    value: '',
+                    className: styles.delBtn
+                }) : ({
+                    name: item,
+                    value: item,
+                })),
+
             // abc键盘（想不到合适的名字）：包含数字和字母，对象类型{value:'',className:''}
             ABC: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
                 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
                 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
-                '返回', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'].map(item => {
+                'BACK', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'].map(item => {
                     switch (item) {
                         case 'A':
                             return {
@@ -91,10 +143,10 @@ class CxyKeyboard {
                                 value: item,
                                 className: styles.aBox
                             }
-                        case '返回':
+                        case 'BACK':
                             return {
-                                name: 'BACK',
-                                value: item,
+                                name: item,
+                                value: '返回',
                                 className: styles.backBtn
                             };
                         case 'DEL':
@@ -110,6 +162,8 @@ class CxyKeyboard {
                             }
                     }
                 }),
+
+            // 车牌前缀键盘
             carNumberPre: ['京', '津', '渝', '沪', '冀', '晋', '辽', '吉', '黑', '苏',
                 '浙', '皖', '闽', '赣', '鲁', '豫', '鄂', '湘', '粤', '琼',
                 '川', '贵', '云', '陕', '甘', '青', '蒙', '桂', '宁', '新',
@@ -133,7 +187,70 @@ class CxyKeyboard {
                                 value: item
                             }
                     }
-                })
+                }),
+
+            // url键盘 小写字母+数字
+            url: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'q',
+                'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+                'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+                'SWITCH_URL', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'DEL'].map(item => {
+                    switch (item) {
+                        case 'a':
+                            return {
+                                name: item,
+                                value: item,
+                                className: styles.aBox
+                            }
+                        case 'SWITCH_URL':
+                            return {
+                                name: 'SWITCH_URL', // 切换到大写字母+符号键盘
+                                value: 'A',
+                                className: styles.switchBtn
+                            };
+                        case 'DEL':
+                            return {
+                                name: 'DEL',
+                                value: '',
+                                className: styles.delBtn
+                            }
+                        default:
+                            return {
+                                name: item,
+                                value: item,
+                            }
+                    }
+                }),
+            // URL键盘 大写字母+符号
+            URL: ['#', '&', '?', '%', '/', '@', '.', '-', '_', '=',
+                'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+                'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
+                'SWITCH_url', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'].map(item => {
+                    switch (item) {
+                        case 'A':
+                            return {
+                                name: item,
+                                value: item,
+                                className: styles.aBox
+                            }
+                        case 'SWITCH_url':
+                            return {
+                                name: 'SWITCH_url', // 切换到小写字母+数字键盘
+                                value: 'a',
+                                className: styles.switchBtn
+                            };
+                        case 'DEL':
+                            return {
+                                name: 'DEL',
+                                value: '',
+                                className: styles.delBtn
+                            }
+                        default:
+                            return {
+                                name: item,
+                                value: item,
+                            }
+                    }
+                }),
         }
     }
 
@@ -213,6 +330,38 @@ class CxyKeyboard {
     }
 
     /**
+     * 获取键盘按键的Dom字符串
+     * @param {string} type 键盘类型
+     * @returns {string} 返回键盘按键的Dom字符串
+     */
+    getKeysDomString(type = 'ABC') {
+        // 获取键盘的按键
+        const keys = this.keys[type];
+        if (!keys) return '';
+
+        if (['number', 'digit', 'idcard'].indexOf(type) !== -1) {
+            // 数字键盘 || 九宫格风格
+            return `<div class="${styles.numberKeyboard}">
+                        ${keys.map(item => `
+                            <div keyboard-key-name="${item.name}" class="${styles.numKeyBox}">
+                                <span class="${styles.numKey + ' ' + (item.className || '')}">${item.value || ''}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="${styles.rigthBtns}">
+                    </div>`;
+        } else {
+            return `<div class="${styles.defaultKeyboard}">
+                        ${keys.map(item => `
+                            <div keyboard-key-name="${item.name}" class="${styles.keyBox}">
+                                <span class="${styles.key + ' ' + (item.className || '')}">${item.value || ''}</span>
+                            </div>
+                        `).join('')}
+                    </div>`;
+        }
+    }
+
+    /**
      * 显示键盘
      * @param {object} param 参数
      * {
@@ -260,11 +409,7 @@ class CxyKeyboard {
         return this.createEle(this.domId, 'div', `
                 <div class="${styles.keyboard}">
                     <div class="${styles.keys + (animation ? ' ' + styles.showKeys : '')}">
-                        ${this.keys[type] && this.keys[type].map(item => `
-                            <div keyboard-key-name="${item.name}" class="${styles.keyBox}">
-                                <span class="${styles.key + ' ' + (item.className || '')}">${item.value || ''}</span>
-                            </div>
-                        `).join('')}
+                        ${this.getKeysDomString(type)}
                     </div>
                     ${ backgroundColor ? `<div class="${styles.keyboardBg}" keyboard-hide="1" style="background:${backgroundColor}" ></div>` : ''}
                 </div>
@@ -410,7 +555,7 @@ class CxyKeyboard {
 
         // 隐藏键盘
         if (attributes['keyboard-hide']) {
-            this.hideKeyboard = true;
+            return this.hideKeyboard = true;
         }
 
         // 获取点击的按钮
@@ -424,11 +569,17 @@ class CxyKeyboard {
                 // 删除按键
                 this.deleteValue(keyboardName);
             } else if (keyboardName === 'BACK') {
-                // 切换键盘
+                // 切换到车牌前缀键盘
                 this.switchKeyboard('carNumberPre');
             } else if (keyboardName === 'ABC') {
-                // 切换键盘
+                // 切换到ABC键盘
                 this.switchKeyboard('ABC');
+            } else if (keyboardName === 'SWITCH_URL') {
+                // 切换URL大写键盘
+                this.switchKeyboard('URL');
+            } else if (keyboardName === 'SWITCH_url') {
+                // 切换URL小写键盘
+                this.switchKeyboard('url');
             }
 
             // 显示点击按键时的UI效果
@@ -768,7 +919,7 @@ class CxyKeyboard {
      * 添加点击按键时的UI效果
      */
     static addKeyActiveUI(keyboardName) {
-        const keyDom = document.querySelector(`[keyboard-key-name="${keyboardName}"] .${styles.key}`);
+        const keyDom = document.querySelector(`[keyboard-key-name="${keyboardName}"] span`);
         if (keyDom) keyDom.className += ' ' + styles.keyActive;
     }
 

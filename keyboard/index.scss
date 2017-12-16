@@ -18,6 +18,7 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
         -webkit-tap-highlight-color: rgba(255,0,0,0); // 取消手机端 点击时会出现边框
         user-select: none; // 禁止选中
         font-family: $font-family-zh;
+        box-sizing: border-box; // 盒子模型
     }
 }
 
@@ -37,7 +38,6 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     left: 50%;
     right: 0;
     bottom: 0;
-    padding-top: 10px;
     height: 430px;
     width: 750px;
     transform: translateX(-50%);
@@ -55,6 +55,17 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
         height: 100%;
         background: #d1d5da;
         z-index: -1;
+    }
+}
+
+// 默认键盘、[车牌前缀键盘、ABC键盘(字母+数组)]
+.defaultKeyboard{
+    margin-top: 5px;
+
+    // 改变按钮被按下时的UI
+    .keyActive{
+        top: 1PX;
+        box-shadow: 0 -1PX #909396;
     }
 }
 
@@ -87,7 +98,7 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 }
 
 // 特殊按键
-.abcBox,.delBtn,.backBtn{
+.noneBtn,.abcBox,.delBtn,.backBtn,.switchBtn{
     background: #adb3bc;
     width: 102.5px;
     font-size: 36px;
@@ -102,18 +113,45 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 
 // 改变按钮被按下时的UI
 .keyActive{
-    top: 1PX;
     background: #c0c1c6;
-    box-shadow: 0 -1PX #909396;
 }
 
-
+// 删除按钮按下时的UI
 .delBtn.keyActive{
     background: #c0c1c6 url("./images/svg/del-click.svg") no-repeat center center;
     background-size: 48px;
 }
 
+// 数字键盘
+.numberKeyboard{
+    width: 100%;
+    height: 100%;
+}
+.numKeyBox{
+    float: left;
+    width: 33.33%;
+    height: 25%;
+    background: #fff;
+    border-top: 1PX solid #d1d5da;
+    border-right: 1PX solid #d1d5da;
+}
+.numKey{
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 107px;
+    font-size: 60px;
+    color: #1a1a1a;
+}
 
+// URL键盘
+.switchBtn{
+    background: #adb3bc url("./images/svg/switch.svg") no-repeat center center;
+    background-size: 48px;
+    padding-left: 12px;
+    line-height: 70px;
+}
 
 // 显示键盘动画
 .showKeys{
@@ -178,7 +216,6 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
         bottom: 0;
     }
 }
-
 @keyframes hideKeyboard{
     0%{
         bottom: 0;

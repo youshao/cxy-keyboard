@@ -5,11 +5,10 @@ const btn = () => {
 
   // 绑定点击事件
   btn.addEventListener('touchstart', e => {
-    console.log('点击了输入框')
     // 显示键盘
     cxyKeyboard.show(Object.assign({}, {
       selectors: '#inputId',
-      type: 'carNumberPre', //  ABC：字母数据键盘；carNumberPre：车牌前缀键盘
+      type: 'idcard', //  ABC：字母数据键盘；carNumberPre：车牌前缀键盘 number:数字键盘 digit:带小数点的数字键盘 idcard:身份证键盘
       placeholder: 'testadsga',
     }, window.showParam));
   })
@@ -25,6 +24,8 @@ const btn = () => {
       placeholder: 'testadsga'
     }]
   });
+
+  window.keyboard = cxyKeyboard;
 
   // 内容发生变化
   cxyKeyboard.onChange = (value) => {
