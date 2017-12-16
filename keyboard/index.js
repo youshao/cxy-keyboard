@@ -166,7 +166,6 @@ class CxyKeyboard {
         if (dom) {
             // Dom元素已经存在
             dom.innerHTML = html;
-            console.log('Dom元素已经存在：', dom)
             return dom;
         } else {
             const fragment = document.createDocumentFragment();
@@ -203,7 +202,6 @@ class CxyKeyboard {
             } else {
                 console.error('document.body不存在，请确认调用js之前，body是否已经加载')
             };
-            console.log('创建Dom元素', fragment)
             return fragment;
         }
     }
