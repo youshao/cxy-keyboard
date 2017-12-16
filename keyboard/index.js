@@ -181,8 +181,14 @@ class CxyKeyboard {
                 CxyKeyboard.watchLongPress(); // 监听长按事件
             });
 
-            // 手指离开时 移除长按事件
-            ele.addEventListener('touchend', (e) => CxyKeyboard.removeLongPress());
+            // 绑定触摸离开事件
+            ele.addEventListener('touchend', (e) => {
+                // 移除长按事件
+                CxyKeyboard.removeLongPress();
+
+                // 移除点击按键时的UI效果
+                CxyKeyboard.removeKeyActiveUI();
+            });
 
             // 添加Dom元素到DocumentFragment中
             fragment.appendChild(ele);
@@ -384,11 +390,11 @@ class CxyKeyboard {
         // 阻止关闭键盘
         this.stopCloseKeyboard();
 
-        // 处理键盘点击事件
-        this.handleKeyboard(e);
-
         // 重写静态方法
         CxyKeyboard.handleKeyboard = () => this.handleKeyboard(e);
+
+        // 处理键盘点击事件
+        this.handleKeyboard(e);
 
         // 设置为可点击
         this.canClickBtn = true;
@@ -409,6 +415,7 @@ class CxyKeyboard {
 
         // 获取点击的按钮
         const keyboardName = attributes['keyboard-key-name'];
+
         if (keyboardName) {
             if (this.excludeValue.indexOf(keyboardName) === -1) {
                 // 普通按键 新增的内容
@@ -423,6 +430,9 @@ class CxyKeyboard {
                 // 切换键盘
                 this.switchKeyboard('ABC');
             }
+
+            // 显示点击按键时的UI效果
+            CxyKeyboard.addKeyActiveUI(keyboardName);
         }
 
         // 回调内容改变事件
@@ -680,7 +690,7 @@ class CxyKeyboard {
         CxyKeyboard.longPressKeyboardId = setTimeout(() => {
             CxyKeyboard.isLongPress = true; // 设置长按标识符为true
             CxyKeyboard.longPressKeyboard();
-        }, 1000); // 1秒后触发长按事件
+        }, 500); // 500毫秒后触发长按事件
     }
 
     /**
@@ -700,10 +710,15 @@ class CxyKeyboard {
             clearInterval(CxyKeyboard.longPressKeyboardFunId);
 
             CxyKeyboard.longPressKeyboardFunId = setInterval(() => {
-                // 判断是否处于长按状态
-                if (CxyKeyboard.isLongPress) {
-                    CxyKeyboard.handleKeyboard();
-                } else {
+                try {
+                    // 判断是否处于长按状态
+                    if (CxyKeyboard.isLongPress) {
+                        CxyKeyboard.handleKeyboard();
+                    } else {
+                        clearInterval(CxyKeyboard.longPressKeyboardFunId);
+                    }
+                } catch (e) {
+                    // 出错时，终止循环切换键盘会用新的Dom元素替换已有Dom元素，所致会导致获取属性失败 出现：TypeError: Cannot read property 'attributes' of null
                     clearInterval(CxyKeyboard.longPressKeyboardFunId);
                 }
             }, 100); // 每100毫秒 模拟一次按键
@@ -727,18 +742,17 @@ class CxyKeyboard {
     static getAllAttr(e) {
         let attrOjb = {}; // attribute对象
         let target = e.target;
-        let attributes = '';
-        do {
+        let { attributes } = target;
+
+        while (attributes) {
+            Object.keys(attributes).map(item => {
+                const { name, value } = attributes[item];
+                attrOjb = Object.assign({ [name]: value }, attrOjb); // 合并对象
+                return true
+            });
+            target = target.parentNode; // 设置target为父元素
             ({ attributes='' } = target); // 获取attributes
-            if (attributes) {
-                Object.keys(attributes).map(item => {
-                    const { name, value } = attributes[item];
-                    attrOjb = Object.assign({ [name]: value }, attrOjb); // 合并对象
-                    return true
-                });
-                target = target.parentNode; // 设置target为父元素
-            }
-        } while (attributes);
+        };
 
         return attrOjb;
     }
@@ -748,6 +762,25 @@ class CxyKeyboard {
      */
     static hide() {
         // 隐藏键盘的静态方法会在对象实例化后重新赋值
+    }
+
+    /**
+     * 添加点击按键时的UI效果
+     */
+    static addKeyActiveUI(keyboardName) {
+        const keyDom = document.querySelector(`[keyboard-key-name="${keyboardName}"] .${styles.key}`);
+        if (keyDom) keyDom.className += ' ' + styles.keyActive;
+    }
+
+    /**
+     * 移除点击按键时的UI效果
+     */
+    static removeKeyActiveUI() {
+        const keysDom = document.querySelectorAll('.' + styles.keyActive);
+        const reg = new RegExp(' ' + styles.keyActive, 'g');
+        for (let i = 0; i < keysDom.length; i++) {
+            keysDom[i].className = keysDom[i].className.replace(reg, '');
+        }
     }
 }
 

@@ -7,7 +7,7 @@
     "clean": "rimraf dist",
     "build:webpack": "webpack --config webpack.pro.config.js --progress --colors",
     "build": "npm-run-all clean build:webpack",
-    "watch": "webpack --watch",
+    "watch": "webpack --watch --config webpack.pro.config.js",
     "start": "webpack-dev-server --config webpack.dev.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

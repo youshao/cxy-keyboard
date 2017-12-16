@@ -80,11 +80,6 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     box-shadow: 0 1PX #909396;
     cursor: pointer;
 }
-.key:active{
-    top: 1PX;
-    background: #c0c1c6;
-    box-shadow: 0 -1PX #909396;
-}
 
 // 字面A键
 .aBox{
@@ -104,10 +99,21 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     background: #adb3bc url("./images/svg/del.svg") no-repeat center center;
     background-size: 48px;
 }
-.delBtn:active{
+
+// 改变按钮被按下时的UI
+.keyActive{
+    top: 1PX;
+    background: #c0c1c6;
+    box-shadow: 0 -1PX #909396;
+}
+
+
+.delBtn.keyActive{
     background: #c0c1c6 url("./images/svg/del-click.svg") no-repeat center center;
     background-size: 48px;
 }
+
+
 
 // 显示键盘动画
 .showKeys{
