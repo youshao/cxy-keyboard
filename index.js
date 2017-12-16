@@ -5,26 +5,17 @@ const btn = () => {
 
   // 绑定点击事件
   btn.addEventListener('touchstart', e => {
+    console.log('点击了输入框')
     // 显示键盘
     cxyKeyboard.show(Object.assign({}, {
       selectors: '#inputId',
       type: 'carNumberPre', //  ABC：字母数据键盘；carNumberPre：车牌前缀键盘
       placeholder: 'testadsga',
     }, window.showParam));
-
-    // 内容发生变化
-    cxyKeyboard.onChange = (value) => {
-      window.showParam = { value };
-    };
-
-    // 光标发生变化
-    cxyKeyboard.cursorChange = cursorIndex => {
-      window.showParam = Object.assign(window.showParam, { cursorIndex });
-    };
   })
 
-  btn.className = 'js-keyboardHandle'; // 点击不会关闭键盘的标识符
-  btn.innerHTML = `输入的内容：<span id="inputId"></span>`;
+  btn.id = 'inputId'; // 点击不会关闭键盘的标识符
+  btn.style = 'margin:20px auto; padding:0 2px; width:80%; min-height:30px; line-height:30px; max-height:200px; over-flow:auto; border:1px solid #000';
   document.body.appendChild(btn);
 
   // 示例话 需要放在节点渲染后 否则无法设置placeholder
@@ -34,7 +25,16 @@ const btn = () => {
       placeholder: 'testadsga'
     }]
   });
-  window.cxyKeyboard = cxyKeyboard;
+
+  // 内容发生变化
+  cxyKeyboard.onChange = (value) => {
+    window.showParam = { value };
+  };
+
+  // 光标发生变化
+  cxyKeyboard.cursorChange = cursorIndex => {
+    window.showParam = Object.assign(window.showParam, { cursorIndex });
+  };
 }
 btn();
 

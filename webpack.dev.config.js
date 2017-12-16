@@ -72,7 +72,7 @@ const config = {
                             modules: true,
                             sourceMap: true,
                             importLoaders: 1,
-                            localIdentName: '[local]___[hash:base64:5]'
+                            localIdentName: 'ys-keyboard-[local]'
                         }
                     },
                     {

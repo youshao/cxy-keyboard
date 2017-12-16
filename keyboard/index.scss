@@ -3,10 +3,6 @@
 // 字体
 $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 
-.hide{
-    display: none;
-}
-
 // 透明背景 用于兼容在UIwebView下 点击空白处时 document.documentElement.addEventListener监听无效
 .transparentBg{
     position: fixed;
@@ -25,15 +21,17 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     }
 }
 
-.bg{
+// 键盘背景
+.keyboardBg{
     position: fixed;
     left: 0;
     top: -100px;
     right: 0;
     bottom: -100px;
-    z-index: 9998;
+    z-index: 9990;
 }
 
+// 键盘按键
 .keys{
     position: fixed;
     left: 50%;
@@ -60,24 +58,13 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     }
 }
 
-// 显示键盘动画
-.showKeys{
-    animation: showKeyboard .3s;
-}
-// 隐藏键盘动画
-.hideKeys{
-    .bg{
-        display: none;
-    }
-    .keys{
-        animation: hideKeyboard .3s forwards;
-    }
-}
-
-.keyItem{
+// 按键区块
+.keyBox{
     float: left;
     overflow: hidden;
 }
+
+// 按键
 .key{
     float: left;
     position: relative;
@@ -98,15 +85,20 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     background: #c0c1c6;
     box-shadow: 0 -1PX #909396;
 }
+
+// 字面A键
 .aBox{
     margin-left: 40px;
 }
 
+// 特殊按键
 .abcBox,.delBtn,.backBtn{
     background: #adb3bc;
     width: 102.5px;
     font-size: 36px;
 }
+
+// 删除键
 .delBtn{
     margin-right: 0;
     background: #adb3bc url("./images/svg/del.svg") no-repeat center center;
@@ -117,7 +109,22 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     background-size: 48px;
 }
 
-.keyValueBox{
+// 显示键盘动画
+.showKeys{
+    animation: showKeyboard .3s;
+}
+// 隐藏键盘动画
+.hideKeys{
+    .keyboardBg{
+        display: none;
+    }
+    .keys{
+        animation: hideKeyboard .3s forwards;
+    }
+}
+
+// 模拟的输入框
+.input{
     margin: 0;
     padding: 0;
     line-height: 1.5;
@@ -125,22 +132,9 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     font-size: inherit;
     overflow: hidden;
 }
-.keyValueBoxCursor{
-    position: relative;
-    &::after{
-        content: '';
-        display: block;
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 1PX;
-        background: #108ee9;
-        animation: cursor 1s infinite linear;
-    }
-}
+
 // 单个按键的内容
-.keyValueItem{
+.keyValue{
     position: relative;
     float: left;
     line-height: inherit;

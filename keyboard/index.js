@@ -2,19 +2,24 @@ import { setTimeout, clearInterval, clearTimeout, setInterval } from 'timers';
 
 const styles = require('./index.scss');
 
+/**
+ * H5键盘类
+ * @author YS
+ */
 class CxyKeyboard {
 
     /**
      * 构造函数
+     * @constructor
      * @param {object} params 
      * {
      * @param {string} domId Dom元素的Id 默认：cxyKeyboard
-     * @param {array} placeholders placeholder数组 结构：
-     * {
-     * selectors: 'css选择器',
-     * placeholder: '无输入时的提示',
-     * placeholderColor: '字体颜色，支持css所支持的字符串'
-     * }
+     * @param {array} placeholders placeholder数组
+     * [{
+     * @param {string} selectors css选择器
+     * @param {string} placeholder 无输入时的提示
+     * @param {string} placeholderColor placeholder的字体颜色，支持css所支持的字符串
+     * }]
      */
     constructor(params = {}) {
         const { domId, placeholders } = params;
@@ -40,7 +45,7 @@ class CxyKeyboard {
         // 当前位置
         this.cursorIndex = undefined;
 
-        // 点击输入框的次数
+        // 点击输入框的次数 当点击第一个文字时，用来随机切换光标的位置。临时处理方法，后续应该将文字的点击区块分为左右两块区域
         this.countClick = 0;
 
         // 隐藏键盘
@@ -161,6 +166,7 @@ class CxyKeyboard {
         if (dom) {
             // Dom元素已经存在
             dom.innerHTML = html;
+            console.log('Dom元素已经存在：', dom)
             return dom;
         } else {
             const fragment = document.createDocumentFragment();
@@ -169,7 +175,7 @@ class CxyKeyboard {
             const ele = document.createElement(type);
             ele.id = id; // 设置id
             ele.innerHTML = html; // 写入内容
-            
+
             // 绑定触摸事件
             ele.addEventListener('touchstart', (e) => {
                 this.handleClick(e); // 处理触摸事件
@@ -197,6 +203,7 @@ class CxyKeyboard {
             } else {
                 console.error('document.body不存在，请确认调用js之前，body是否已经加载')
             };
+            console.log('创建Dom元素', fragment)
             return fragment;
         }
     }
@@ -210,15 +217,15 @@ class CxyKeyboard {
      * @param {boolean} animation 显示动画 默认：true 
      * @param {string} value 已经输入的内容
      * @param {string} backgroundColor 蒙层背景色 不传时 不显示背景 支持css所支持的数值 例如（rgba(0,0,0,1)、#FFF)
-     * @param {string} placeholder 该提示会在输入字段为空时显示
-     * @param {string} placeholderColor placeholder的颜色
+     * @param {string} placeholder 无输入时的提示
+     * @param {string} placeholderColor placeholder的字体颜色，支持css所支持的字符串
      * }
      * @param {boolean} isSwitch 切换键盘标识符，非切换键盘时，如果键盘已经存在，则不重新渲染页面
      * @returns {DocumentFragment} createEle函数返回的文档片段
      */
     show(param = {}, isSwitch = false) {
-        // 阻止全局的点击关闭事件
-        this.hideKeyboard = false;
+        // 阻止关闭键盘
+        this.stopCloseKeyboard();
 
         // pushState 来处理安卓点击后退按钮会关闭webView的问题
         if (this.isAndroid() && !this.isShow) {
@@ -250,12 +257,12 @@ class CxyKeyboard {
                 <div class="${styles.keyboard}">
                     <div class="${styles.keys + (animation ? ' ' + styles.showKeys : '')}">
                         ${this.keys[type] && this.keys[type].map(item => `
-                            <div keyboard-name="${item.name}" class="${styles.keyItem}">
+                            <div keyboard-key-name="${item.name}" class="${styles.keyBox}">
                                 <span class="${styles.key + ' ' + (item.className || '')}">${item.value || ''}</span>
                             </div>
                         `).join('')}
                     </div>
-                    ${ backgroundColor ? `<div class="${styles.bg}" keyboard-hide="1" style="background:${backgroundColor}" ></div>` : ''}
+                    ${ backgroundColor ? `<div class="${styles.keyboardBg}" keyboard-hide="1" style="background:${backgroundColor}" ></div>` : ''}
                 </div>
             `)
     }
@@ -275,11 +282,38 @@ class CxyKeyboard {
         const dom = this.getKeyboardDom();
         if (dom) {
             dom.className += ' ' + styles.hideKeys; // 隐藏动画
-            setTimeout(() => dom.remove(), 300); // 延迟300毫秒删除键盘 等待动画结束
+            this.removeKeyboardDomId = setTimeout(() => {
+                dom.remove(); // 移除键盘Dom元素
+                this.reset(); // 重置
+            }, 300); // 延迟300毫秒删除键盘 等待动画结束
         }
 
-        // 重置
-        this.reset();
+
+    }
+
+    /**
+     * 恢复处于删除中的键盘
+     */
+    restoreDeleteKeyboard() {
+        const dom = this.getKeyboardDom();
+        if (dom && this.removeKeyboardDomId) {
+            clearTimeout(this.removeKeyboardDomId); // 阻止删除Dom元素操作
+            dom.className = dom.className.replace(' ' + styles.hideKeys, ''); // 移除隐藏动画
+        }
+    }
+
+    /**
+     * 阻止关闭键盘
+     */
+    stopCloseKeyboard() {
+        // 不允许隐藏键盘
+        this.hideKeyboard = false;
+
+        // 键盘处于删除状态时，还原键盘
+        this.restoreDeleteKeyboard();
+
+        // 移除关闭键盘事件的句柄Id
+        this.removeHandleOtherClickId();
     }
 
     /**
@@ -349,14 +383,8 @@ class CxyKeyboard {
         // 设置为不可点击
         this.canClickBtn = false;
 
-        // 存在关闭键盘的等待句柄
-        if (CxyKeyboard.handleOtherClickId) {
-            // 取消关闭事件
-            clearTimeout(CxyKeyboard.handleOtherClickId);
-
-            // 清除句柄id
-            CxyKeyboard.handleOtherClickId = undefined;
-        }
+        // 阻止关闭键盘
+        this.stopCloseKeyboard();
 
         // 处理键盘点击事件
         this.handleKeyboard(e);
@@ -373,9 +401,6 @@ class CxyKeyboard {
      * @param {element} e 点击的element对象
      */
     handleKeyboard(e) {
-        // 不允许隐藏键盘
-        this.hideKeyboard = false;
-
         // 获取所有参数
         const attributes = CxyKeyboard.getAllAttr(e);
 
@@ -385,7 +410,7 @@ class CxyKeyboard {
         }
 
         // 获取点击的按钮
-        const keyboardName = attributes['keyboard-name'];
+        const keyboardName = attributes['keyboard-key-name'];
         if (keyboardName) {
             if (this.excludeValue.indexOf(keyboardName) === -1) {
                 // 普通按键 新增的内容
@@ -415,8 +440,8 @@ class CxyKeyboard {
     handleInput(e) {
         if (this.isShow) e.preventDefault();
 
-        // 不允许隐藏键盘
-        this.hideKeyboard = false;
+        // 阻止关闭键盘
+        this.stopCloseKeyboard();
 
         // 获取所有参数
         const attributes = CxyKeyboard.getAllAttr(e);
@@ -454,7 +479,7 @@ class CxyKeyboard {
             // 延迟关闭 避免点击的Dom元素不需要关闭
             CxyKeyboard.handleOtherClickId = setTimeout(() => {
                 // 判断是否应该隐藏键盘
-                if (this.hideKeyboard) {
+                if (this.isShow && this.hideKeyboard) {
                     CxyKeyboard.hide();
                 } else {
                     this.hideKeyboard = true;
@@ -463,6 +488,20 @@ class CxyKeyboard {
             }, 300);
         }
 
+    }
+
+    /**
+     * 移除关闭键盘事件的句柄Id
+     */
+    removeHandleOtherClickId() {
+        // 存在关闭键盘的等待句柄
+        if (CxyKeyboard.handleOtherClickId) {
+            // 取消关闭事件
+            clearTimeout(CxyKeyboard.handleOtherClickId);
+
+            // 清除句柄id
+            CxyKeyboard.handleOtherClickId = undefined;
+        }
     }
 
     /**
@@ -497,14 +536,14 @@ class CxyKeyboard {
             // 输入的内容
             const values = value.map((item, i) =>
                 `<span 
-                    class="${styles.keyValueItem + (isShowCursor && i === index ? ' ' + cursorClassName : '')}" 
+                    class="${styles.keyValue + (isShowCursor && i === index ? ' ' + cursorClassName : '')}" 
                     keyboard-index="${i}"
                 >${item}</span>`)
                 .join('');
 
             // 用P标签包裹输入的内容
             const p = document.createElement('p');
-            p.className = styles.keyValueBox;
+            p.className = styles.input;
             if (values.length > 0) {
                 // 存在内容
                 p.innerHTML = values;
@@ -514,7 +553,7 @@ class CxyKeyboard {
                 p.innerHTML = placeholder
                     ? `
                     <span 
-                        class="${styles.keyValueItem + (isShowCursor ? ' ' + styles.cursor + ' ' + styles.leftCursor : '')}" 
+                        class="${styles.keyValue + (isShowCursor ? ' ' + styles.cursor + ' ' + styles.leftCursor : '')}" 
                         style="color:${placeholderColor}">${placeholder}</span>`
                     : '';
             }
@@ -562,7 +601,12 @@ class CxyKeyboard {
 
     /**
      * placeholders初始化
-     * @param {array} 
+     * @param {array} placeholders placeholder数组
+     * [{
+     * @param {string} selectors css选择器
+     * @param {string} placeholder 无输入时的提示
+     * @param {string} placeholderColor placeholder的字体颜色，支持css所支持的字符串
+     * }]
      */
     placeholdersInit(placeholders) {
         if (placeholders && placeholders.length > 0) {
@@ -571,11 +615,11 @@ class CxyKeyboard {
                 const dom = this.getInputDom(selectors);
                 if (dom) {
                     const p = document.createElement('p');
-                    p.className = styles.keyValueBox;
+                    p.className = styles.input;
                     p.innerHTML = placeholder
                         ? `
                         <span 
-                            class="${styles.keyValueItem}" 
+                            class="${styles.keyValue}" 
                             style="color:${placeholderColor}"
                             >${placeholder}</span>`
                         : '';
@@ -633,7 +677,7 @@ class CxyKeyboard {
     /**
      * 监听长按事件
      */
-    static watchLongPress(){
+    static watchLongPress() {
         clearTimeout(CxyKeyboard.longPressKeyboardId); // 避免重复执行
         CxyKeyboard.longPressKeyboardId = setTimeout(() => {
             CxyKeyboard.isLongPress = true; // 设置长按标识符为true
@@ -644,7 +688,7 @@ class CxyKeyboard {
     /**
      * 移除长按事件
      */
-    static removeLongPress(){
+    static removeLongPress() {
         CxyKeyboard.isLongPress = undefined; // 移除长按标识符
         clearTimeout(CxyKeyboard.longPressKeyboardId);
     }
