@@ -193,9 +193,9 @@ class CxyKeyboard {
                     }
                 }),
 
-            // url键盘 小写字母+数字
-            url: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'q',
-                'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+            // url键盘 小写字母+符号
+            url: ['.', '#', '&', '?', ':', '/', '@', '-', '_', '=',
+                'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
                 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
                 'SWITCH_URL', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'DEL'].map(item => {
                     switch (item) {
@@ -207,7 +207,7 @@ class CxyKeyboard {
                             }
                         case 'SWITCH_URL':
                             return {
-                                name: 'SWITCH_URL', // 切换到大写字母+符号键盘
+                                name: 'SWITCH_URL', // 切换到大写字母+数字键盘
                                 value: 'A',
                                 className: styles.switchBtn
                             };
@@ -224,8 +224,8 @@ class CxyKeyboard {
                             }
                     }
                 }),
-            // URL键盘 大写字母+符号
-            URL: ['#', '&', '?', '%', '/', '@', '.', '-', '_', '=',
+            // URL键盘 大写字母+数字
+            URL: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
                 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
                 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
                 'SWITCH_url', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'].map(item => {
@@ -238,7 +238,7 @@ class CxyKeyboard {
                             }
                         case 'SWITCH_url':
                             return {
-                                name: 'SWITCH_url', // 切换到小写字母+数字键盘
+                                name: 'SWITCH_url', // 切换到小写字母+符号键盘
                                 value: 'a',
                                 className: styles.switchBtn
                             };
