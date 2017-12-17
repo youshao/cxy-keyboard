@@ -12,6 +12,7 @@ const config = {
     entry: [
         // 文件入口配置
         './index.js',
+        // './keyboard/index.js'
     ],
 
     output: {
@@ -33,7 +34,7 @@ const config = {
     devtool: 'inline-source-map',
 
     devServer: {
-        contentBase: path.resolve(__dirname, 'dist'),
+        // contentBase: path.resolve(__dirname, 'dist'),
         port: '8888',
         hot: true,
         host: '0.0.0.0',
@@ -124,7 +125,7 @@ const config = {
         }),
 
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
+            template: './index.html',
             // html模板的路径
 
             title: 'Development',
@@ -136,24 +137,24 @@ const config = {
             // favicon: './src/favicon.ico',
             // favicon路径
 
-            inject: 'body',
+            inject: 'head',
             // js插入的位置，true/'head'  false/'body'
 
-            chunks: ['main'],
+            // chunks: ['main'],
             // 指定引入的chunk，根据entry的key配置，不配置就会引入所有页面的资源
 
             hash: false,
             // 这样每次客户端页面就会根据这个hash来判断页面是否有必要刷新
             // 在项目后续过程中，经常需要做些改动更新什么的，一但有改动，客户端页面就会自动更新！
 
-            minify: {
-                // 压缩HTML文件
-                removeComments: true,
-                // 移除HTML中的注释
+            // minify: {
+            //     // 压缩HTML文件
+            //     removeComments: true,
+            //     // 移除HTML中的注释
 
-                collapseWhitespace: true,
-                // 删除空白符与换行符
-            }
+            //     collapseWhitespace: true,
+            //     // 删除空白符与换行符
+            // }
         }),
 
         new webpack.HotModuleReplacementPlugin(),

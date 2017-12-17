@@ -1,4 +1,5 @@
 import { setTimeout, clearInterval, clearTimeout, setInterval } from 'timers';
+import { fail } from 'assert';
 
 const styles = require('./index.scss');
 
@@ -13,13 +14,13 @@ class CxyKeyboard {
      * @constructor
      * @param {object} params 参数
      * @param {string} params.domId 键盘Dom元素的Id 默认：cxyKeyboard
-     * @param {array} params.placeholders placeholder数组
-     * @param {string} params.placeholders.selectors css选择器
-     * @param {string} params.placeholders.placeholder 无输入时的提示
-     * @param {string} params.placeholders.placeholderColor placeholder的字体颜色，支持css所支持的字符串
+     * @param {array} params.inputs placeholder数组
+     * @param {string} params.inputs.selectors css选择器
+     * @param {string} params.inputs.placeholder 无输入时的提示
+     * @param {string} params.inputs.placeholderColor placeholder的字体颜色，支持css所支持的字符串
      */
     constructor(params = {}) {
-        const { domId, placeholders } = params;
+        const { domId, inputs } = params;
 
         /** 键盘对象 */
         this.keys = this.defaultKeys();
@@ -46,6 +47,9 @@ class CxyKeyboard {
         /** 键盘处于显示状态 */
         this.isShow = false;
 
+        /** 当前活跃的输入框Id */
+        this.activeId = undefined;
+
         /** 光标当前位置 */
         this.cursorIndex = undefined;
 
@@ -58,8 +62,11 @@ class CxyKeyboard {
         /** 判断当前是否可以点击按键 用于避免频繁点击 */
         this.canClickBtn = true;
 
-        // 初始化placeholders
-        this.placeholdersInit(placeholders);
+        /** 保存所有input框在显示键盘时的接收到的参数 */
+        this.inputs = {};
+
+        // 初始化输入框
+        this.inputsInit(inputs);
 
         // 其他JS操作
         this.other();
@@ -362,7 +369,7 @@ class CxyKeyboard {
      * 显示键盘
      * @param {object} param 参数
      * @param {string} param.selectors css选择器（不支持选input或textarea等输入标签，因为这些标签会调起系统键盘）
-     * @param {string} param.type 键盘的类型 ABC：字母数据键盘；carNumberPre：车牌前缀键盘
+     * @param {string} param.type 键盘的类型 默认：ABC（字母数字键盘）
      * @param {boolean} param.animation 显示动画 默认：true 
      * @param {string} param.value 已经输入的内容
      * @param {string} param.backgroundColor 蒙层背景色 不传时 不显示背景 支持css所支持的数值 例如（rgba(0,0,0,1)、#FFF)
@@ -381,19 +388,32 @@ class CxyKeyboard {
             history.pushState({}, "", "");
         }
 
+        // 移除光标
+        CxyKeyboard.removeCursor();
+
+        const { selectors } = param;
+
+        // 保存当前输入框的内容到inputs中
+        this.activeId = selectors; // 保存当前活跃的id
+        this.inputs[selectors] = Object.assign(
+            {
+                value: '',
+                type: 'ABC',
+                animation: true
+            },
+            this.inputs[selectors],
+            param); // 合并数据
+
+        // 获取合并后的数据
+        this.showParam = this.inputs[selectors];
+        this.value = this.inputs[selectors].value;
+
+        const { type, animation, backgroundColor } = this.showParam;
+        console.log("显示动画：", animation)
         // 处于显示状态时并且不是切换键盘，则不重新渲染
         if (this.isShow && !isSwitch) {
             return false;
         }
-
-        const { selectors, type = 'ABC', value = '', animation = true, backgroundColor,
-            cursorIndex } = param;
-
-        // 保存传递过来的参数 后续的切换键盘、写入输入等操作需要用到
-        this.showParam = param;
-
-        // 设置默认已经输入的值
-        this.value = value;
 
         // 键盘显示标识符
         this.isShow = true;
@@ -474,6 +494,11 @@ class CxyKeyboard {
      * @param {string} value 当前点击按钮的value
      */
     addValue(value) {
+        const { maxLength } = this.showParam;
+
+        if (this.value.length >= maxLength) {
+            return false; // 禁止写入
+        }
         // 如果光标位置存在
         if (this.cursorIndex !== undefined) {
             if (this.cursorIndex < 0) {
@@ -557,6 +582,11 @@ class CxyKeyboard {
         const keyboardName = attributes['keyboard-key-name'];
 
         if (keyboardName) {
+
+            // 显示点击按键时的UI效果
+            CxyKeyboard.addKeyActiveUI(keyboardName);
+
+            // 处理完UI交互后 再进行逻辑处理
             if (this.excludeValue.indexOf(keyboardName) === -1) {
                 // 普通按键 新增的内容
                 this.addValue(keyboardName);
@@ -576,14 +606,14 @@ class CxyKeyboard {
                 // 切换URL小写键盘
                 this.switchKeyboard('url');
             }
-
-            // 显示点击按键时的UI效果
-            CxyKeyboard.addKeyActiveUI(keyboardName);
         }
 
+        // 保存数据到inputs中
+        if (this.activeId) this.inputs[this.activeId].value = this.value;
+
         // 回调内容改变事件
-        this.onChange(this.value);
-        this.cursorChange(this.cursorIndex || this.value.length - 1);
+        this.onChange(this.value, this.activeId);
+        this.cursorChange(this.cursorIndex || this.value.length - 1, this.activeId);
         this.setInputValue();
     }
 
@@ -601,7 +631,7 @@ class CxyKeyboard {
         const attributes = CxyKeyboard.getAllAttr(e);
 
         // 获取位置
-        let index = attributes['keyboard-index'];
+        let index = attributes['keyboard-value-index'];
         if (index) {
             index = index * 1; // 转为整数
         }
@@ -613,11 +643,28 @@ class CxyKeyboard {
         this.cursorIndex = index;
         this.countClick += 1;
 
-        // 渲染页面
-        this.setInputValue();
+        // 获取键盘输入的ID
+        const inputId = attributes['keyboard-input-id'];
 
         // 返回光标位置
-        this.cursorChange(this.cursorIndex);
+        this.cursorChange(this.cursorIndex, inputId);
+
+        // 判断是否切换键盘
+        if (inputId && inputId !== this.showParam.selectors) {
+            // 切换输入框 切换当前显示的数据
+            this.showParam = this.inputs[inputId];
+            this.showParam.animation = false; // 不显示动画
+            this.value = this.inputs[inputId].value;
+
+            // 移除所有光标
+            CxyKeyboard.removeCursor();
+
+            // 切换键盘
+            return this.show(this.showParam, true);
+        } else {
+            // 渲染页面
+            return this.setInputValue();
+        }
     }
 
     /**
@@ -662,21 +709,22 @@ class CxyKeyboard {
     * 修改输入框的内容以及控制光标
     * @param {object} param 参数
     * @param {boolean} param.showCursor 显示光标
+    * @param {boolean} param.selectors css选择器 选择需要修改的输入框 默认：当前活跃的输入框
     */
     setInputValue(param = {}) {
         // 内容发生变化时 会自动触发此函数
-        const { showCursor = true } = param;
+        const { showCursor = true, selectors = this.showParam.selectors } = param;
 
         // 判断是否显示光标
         const isShowCursor = showCursor && this.isShow;
 
-        const dom = this.getInputDom();
+        const dom = this.getInputDom(selectors);
 
         if (dom) {
             const value = this.value.split(''); // 转为数组
 
             // 当前高亮显示的位置
-            let index = this.cursorIndex !== undefined ? this.cursorIndex : value.length - 1;
+            let index = this.cursorIndex !== undefined ? this.cursorIndex : this.showParam.cursorIndex || value.length - 1;
 
             // 光标的样式名称
             let cursorClassName = styles.cursor;
@@ -689,7 +737,7 @@ class CxyKeyboard {
             const values = value.map((item, i) =>
                 `<span 
                     class="${styles.keyValue + (isShowCursor && i === index ? ' ' + cursorClassName : '')}" 
-                    keyboard-index="${i}"
+                    keyboard-value-index="${i}"
                 >${item}</span>`)
                 .join('');
 
@@ -699,6 +747,7 @@ class CxyKeyboard {
             if (values.length > 0) {
                 // 存在内容
                 p.innerHTML = values;
+                p.setAttribute('keyboard-input-id', selectors);
                 p.addEventListener('touchstart', (e) => this.handleInput(e));
             } else {
                 const { placeholder, placeholderColor = '#ccc' } = this.showParam;
@@ -709,6 +758,7 @@ class CxyKeyboard {
                         style="color:${placeholderColor}">${placeholder}</span>`
                     : '';
             }
+
             dom.innerHTML = ''; // 清空内容
             dom.appendChild(p); // 显示输入的内容
         }
@@ -717,8 +767,9 @@ class CxyKeyboard {
     /**
      * 键盘输入的内容发生变化
      * @param {string} value 内容
+     * @param {object} param 返回调用show()时的param参数
      */
-    onChange(value) {
+    onChange(value, param) {
         // 内容发生变化时 会自动触发此函数
     }
 
@@ -740,10 +791,10 @@ class CxyKeyboard {
 
     /**
      * 获取输入框的Dom元素
-     * @param {string} selectors 包含一个或是多个 CSS 选择器 ，多个则以逗号分隔。默认值：this.showParam.selectors
+     * @param {string} selectors 包含一个或是多个 CSS 选择器 ，多个则以逗号分隔
      * @returns {element|false} 返回Dom元素，不存在时返回false
      */
-    getInputDom(selectors = this.showParam.selectors) {
+    getInputDom(selectors) {
         if (selectors) {
             const dom = document.querySelector(selectors);
             if (dom) return dom;
@@ -752,18 +803,23 @@ class CxyKeyboard {
     }
 
     /**
-     * placeholders初始化
-     * @param {array} placeholders placeholder数组
+     * inputs初始化
+     * @param {array} inputs placeholder数组
      * [{
      * @param {string} selectors css选择器
      * @param {string} placeholder 无输入时的提示
      * @param {string} placeholderColor placeholder的字体颜色，支持css所支持的字符串
      * }]
      */
-    placeholdersInit(placeholders) {
-        if (placeholders && placeholders.length > 0) {
-            placeholders.map(item => {
+    inputsInit(inputs) {
+        if (inputs && inputs.length > 0) {
+            inputs.map(item => {
                 const { selectors, placeholder, placeholderColor = '#ccc' } = item;
+
+                // 保存input的初始参数
+                this.inputs[selectors] = Object.assign({}, this.inputs[selectors], item);
+
+                // 初始化placeholder
                 const dom = this.getInputDom(selectors);
                 if (dom) {
                     const p = document.createElement('p');
@@ -924,6 +980,17 @@ class CxyKeyboard {
         const reg = new RegExp(' ' + styles.keyActive, 'g');
         for (let i = 0; i < keysDom.length; i++) {
             keysDom[i].className = keysDom[i].className.replace(reg, '');
+        }
+    }
+
+    /**
+     * 移除光标（避免存在多个输入框时出现多个光标）
+     */
+    static removeCursor() {
+        const cursorsDom = document.querySelectorAll('.' + styles.cursor + ',.' + styles.leftCursor);
+        const reg = new RegExp((' ' + styles.cursor + '| ' + styles.leftCursor), 'g');
+        for (let i = 0; i < cursorsDom.length; i++) {
+            cursorsDom[i].className = cursorsDom[i].className.replace(reg, '');
         }
     }
 }
