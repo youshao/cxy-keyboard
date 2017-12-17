@@ -11,29 +11,26 @@ class CxyKeyboard {
     /**
      * 构造函数
      * @constructor
-     * @param {object} params 
-     * {
-     * @param {string} domId Dom元素的Id 默认：cxyKeyboard
-     * @param {array} placeholders placeholder数组
-     * [{
-     * @param {string} selectors css选择器
-     * @param {string} placeholder 无输入时的提示
-     * @param {string} placeholderColor placeholder的字体颜色，支持css所支持的字符串
-     * }]
+     * @param {object} params 参数
+     * @param {string} params.domId 键盘Dom元素的Id 默认：cxyKeyboard
+     * @param {array} params.placeholders placeholder数组
+     * @param {string} params.placeholders.selectors css选择器
+     * @param {string} params.placeholders.placeholder 无输入时的提示
+     * @param {string} params.placeholders.placeholderColor placeholder的字体颜色，支持css所支持的字符串
      */
     constructor(params = {}) {
         const { domId, placeholders } = params;
 
-        // 键盘
+        /** 键盘对象 */
         this.keys = this.defaultKeys();
 
-        // 键盘组件的domId
+        /** 键盘组件的domId */
         this.domId = domId || 'cxyKeyboard';
 
-        // 键盘输入的内容
+        /** 键盘输入的内容 */
         this.value = '';
 
-        // 过滤功能按键
+        /** 过滤的功能按键 */
         this.excludeValue = [
             'BACK', // 返回键
             'DEL', // 删除键
@@ -43,22 +40,22 @@ class CxyKeyboard {
             'SWITCH_URL', // URL大写键盘切换键
         ];
 
-        // 显示键盘时的接收到的参数
+        /** 显示键盘时的接收到的参数 */
         this.showParam = {};
 
-        // 键盘处于显示状态
+        /** 键盘处于显示状态 */
         this.isShow = false;
 
-        // 当前位置
+        /** 光标当前位置 */
         this.cursorIndex = undefined;
 
-        // 点击输入框的次数 当点击第一个文字时，用来随机切换光标的位置。临时处理方法，后续应该将文字的点击区块分为左右两块区域
+        /** 点击输入框的次数(键盘隐藏后重置为：0) 当点击第一个文字时，用来随机切换光标的位置。临时处理方法，后续应该将文字的点击区块分为左右两块区域 */
         this.countClick = 0;
 
-        // 隐藏键盘
+        /** 隐藏键盘的标识符 */
         this.hideKeyboard = true;
 
-        // 判断当前是否可以点击按钮 用于避免频繁点击
+        /** 判断当前是否可以点击按键 用于避免频繁点击 */
         this.canClickBtn = true;
 
         // 初始化placeholders
@@ -364,15 +361,13 @@ class CxyKeyboard {
     /**
      * 显示键盘
      * @param {object} param 参数
-     * {
-     * @param {string} selectors css选择器（不支持选<input/>或<textarea/>等输入标签，因为这些标签会调起系统键盘）
-     * @param {string} type 键盘的类型 ABC：字母数据键盘；carNumberPre：车牌前缀键盘
-     * @param {boolean} animation 显示动画 默认：true 
-     * @param {string} value 已经输入的内容
-     * @param {string} backgroundColor 蒙层背景色 不传时 不显示背景 支持css所支持的数值 例如（rgba(0,0,0,1)、#FFF)
-     * @param {string} placeholder 无输入时的提示
-     * @param {string} placeholderColor placeholder的字体颜色，支持css所支持的字符串
-     * }
+     * @param {string} param.selectors css选择器（不支持选input或textarea等输入标签，因为这些标签会调起系统键盘）
+     * @param {string} param.type 键盘的类型 ABC：字母数据键盘；carNumberPre：车牌前缀键盘
+     * @param {boolean} param.animation 显示动画 默认：true 
+     * @param {string} param.value 已经输入的内容
+     * @param {string} param.backgroundColor 蒙层背景色 不传时 不显示背景 支持css所支持的数值 例如（rgba(0,0,0,1)、#FFF)
+     * @param {string} param.placeholder 无输入时的提示
+     * @param {string} param.placeholderColor placeholder的字体颜色，支持css所支持的字符串
      * @param {boolean} isSwitch 切换键盘标识符，非切换键盘时，如果键盘已经存在，则不重新渲染页面
      * @returns {DocumentFragment} createEle函数返回的文档片段
      */
@@ -666,9 +661,7 @@ class CxyKeyboard {
     /**
     * 修改输入框的内容以及控制光标
     * @param {object} param 参数
-    * {
-    * @param {boolean} showCursor 显示光标
-    * }
+    * @param {boolean} param.showCursor 显示光标
     */
     setInputValue(param = {}) {
         // 内容发生变化时 会自动触发此函数
@@ -936,10 +929,20 @@ class CxyKeyboard {
 }
 
 // 静态属性说明
-CxyKeyboard.isOnly = undefined; // 唯一标识符，存在多个实例时，只保存第一个实例的值
-CxyKeyboard.isLongPress = undefined; // 长按句柄标识符
-CxyKeyboard.longPressKeyboardId = undefined; // 长按键盘的句柄Id
-CxyKeyboard.longPressKeyboardFunId = undefined; // 长按键盘时，重复执行函数的句柄Id
-CxyKeyboard.handleOtherClickId = undefined; // 全局触摸事件的句柄Id 用于判断是否应该隐藏键盘
+
+/** 唯一标识符，存在多个实例时，只保存第一个实例的值 */
+CxyKeyboard.isOnly = undefined;
+
+/** 长按句柄标识符 */
+CxyKeyboard.isLongPress = undefined;
+
+/** 长按键盘的句柄Id */
+CxyKeyboard.longPressKeyboardId = undefined;
+
+/** 长按键盘时，重复执行函数的句柄Id */
+CxyKeyboard.longPressKeyboardFunId = undefined;
+
+/** 全局触摸事件的句柄Id 用于判断是否应该隐藏键盘 */
+CxyKeyboard.handleOtherClickId = undefined;
 
 module.exports = CxyKeyboard;
