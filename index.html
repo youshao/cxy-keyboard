@@ -38,11 +38,11 @@
 </head>
 
 <body>
-    <div id="carNumberKeyboard" class="input" onclick="show('#carNumberKeyboard','carNumberPre')"></div>
-    <div id="numberKeyboard" class="input" onclick="show('#numberKeyboard','number')"></div>
-    <div id="digitKeyboard" class="input" onclick="show('#digitKeyboard','digit')"></div>
-    <div id="idcardKeyboard" class="input" onclick="show('#idcardKeyboard','idcard')"></div>
-    <div id="urlKeyboard" class="input" onclick="show('#urlKeyboard','url')"></div>
+    <div id="carNumberKeyboard" class="input" onclick="show('#carNumberKeyboard')"></div>
+    <div id="numberKeyboard" class="input" onclick="show('#numberKeyboard')"></div>
+    <div id="digitKeyboard" class="input" onclick="show('#digitKeyboard')"></div>
+    <div id="idcardKeyboard" class="input" onclick="show('#idcardKeyboard')"></div>
+    <div id="urlKeyboard" class="input" onclick="show('#urlKeyboard')"></div>
 
     <!-- <script src='./dist/bundle.js'></script> -->
     <script>
@@ -62,35 +62,45 @@
         window.keyboard = new cxyKeyboard({
             inputs: [{
                 selectors: '#carNumberKeyboard',
-                placeholder: '请输入车牌号码',
-                type:'carNumberPre',
+                placeholder: '车牌号码键盘(限制了长度为8，且选择车牌前缀后自动切换成字母键盘，只自动切换一次)',
+                type: 'carNumberPre',
                 maxLength: 8,
             }, {
                 selectors: '#numberKeyboard',
-                placeholder: '数字键盘',
-                type:'number',
+                placeholder: '数字键盘（限制了长度为11）',
+                type: 'number',
                 maxLength: 11,
             }, {
                 selectors: '#digitKeyboard',
                 placeholder: '带小数点的数字键盘',
-                type:'digit',
-                maxLength: 5,
+                type: 'digit',
             }, {
                 selectors: '#idcardKeyboard',
                 placeholder: '身份证输入键盘',
-                type:'idcard',
-                maxLength: 18,
+                type: 'idcard',
             }, {
                 selectors: '#urlKeyboard',
-                placeholder: 'URL键盘',
-                type:'url',
-                maxLength: 30,
+                placeholder: 'URL键盘（限制长度为100）',
+                type: 'url',
+                maxLength: 100,
             }]
         });
 
         // 内容发生改变
         keyboard.onChange = function (value, keyboardId) {
-            console.log("内容发生改变", value, keyboardId)
+            
+            if (keyboardId === '#carNumberKeyboard') {
+                if(!window.autoSwitchKeyboard){
+                    window.autoSwitchKeyboard = true; // 只自动帮用户切换一次键盘
+                    if(value.length === 0){
+                        // 需要先输入车牌前缀
+                        keyboard.switchKeyboard('carNumberPre');
+                    }else if(value.length === 1){
+                        // 自动切换成字母键盘
+                        keyboard.switchKeyboard('ABC');
+                    }
+                }
+            }
         };
 
         // 光标发生改变
@@ -98,7 +108,7 @@
             console.log("光标发生改变", cursorIndex, keyboardId)
         };
 
-        function show(id, type) {
+        function show(id) {
             var param = {
                 selectors: id,
                 animation: !keyboard.isShow, // 键盘不存在时则显示动画
