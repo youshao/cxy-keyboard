@@ -409,7 +409,7 @@ class CxyKeyboard {
         this.value = this.inputs[selectors].value;
 
         const { type, animation, backgroundColor } = this.showParam;
-        console.log("显示动画：", animation)
+
         // 处于显示状态时并且不是切换键盘，则不重新渲染
         if (this.isShow && !isSwitch) {
             return false;
