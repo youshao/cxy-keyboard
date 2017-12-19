@@ -702,6 +702,16 @@ class CxyKeyboard {
 
             // 清除句柄id
             CxyKeyboard.handleOtherClickId = undefined;
+
+            // 按钮回复可点击后 还原关闭标识符（按钮不可点击时还原，在点击过快时会出现键盘被隐藏的状态）
+            if(this.canClickBtn){
+                /**
+                 * 还原关闭标识符为可关闭 
+                 * 如果不还原，在显示键盘后直接点击空白处则无法关闭键盘
+                 * 因为这时候的this.hideKeyboard为false；
+                 */
+                this.hideKeyboard = true; 
+            }
         }
     }
 
