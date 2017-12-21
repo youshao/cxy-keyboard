@@ -1,0 +1,257 @@
+
+
+/* 字体*/
+/* 透明背景 用于兼容在UIwebView下 点击空白处时 document.documentElement.addEventListener监听无效*/
+.ys-keyboard-transparentBg{
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -9;
+}
+.ys-keyboard-keyboard *{
+        -webkit-tap-highlight-color: rgba(255,0,0,0); /* 取消手机端 点击时会出现边框*/
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none; /* 禁止选中*/
+        font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","\5FAE\8F6F\96C5\9ED1",Arial,sans-serif;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; /* 盒子模型*/
+    }
+/* 键盘背景*/
+.ys-keyboard-keyboardBg{
+    position: fixed;
+    left: 0;
+    top: -1rem;
+    right: 0;
+    bottom: -1rem;
+    z-index: 9990;
+}
+/* 键盘按键*/
+.ys-keyboard-keys{
+    position: fixed;
+    left: 50%;
+    right: 0;
+    bottom: 0;
+    height: 4.3rem;
+    width: 7.5rem;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    background: #d1d5da;
+    color: #000;
+    z-index: 9999
+}
+.ys-keyboard-keys::after{
+    content: '';
+    display: block;
+    position: absolute;
+    left: -100%;
+    right: -100%;
+    bottom: 0;
+    height: 100%;
+    background: #d1d5da;
+    z-index: -1;
+}
+/* 默认键盘、[车牌前缀键盘、ABC键盘(字母+数组)]*/
+.ys-keyboard-defaultKeyboard{
+    margin-top: 0.05rem;
+}
+/* 改变按钮被按下时的UI*/
+.ys-keyboard-defaultKeyboard .ys-keyboard-keyActive{
+        top: 1PX;
+        -webkit-box-shadow: 0 -1PX #909396;
+                box-shadow: 0 -1PX #909396;
+    }
+/* 按键区块*/
+.ys-keyboard-keyBox{
+    float: left;
+    overflow: hidden;
+}
+/* 按键*/
+.ys-keyboard-key{
+    float: left;
+    position: relative;
+    margin: 0.1rem 0.05rem;
+    height: 0.85rem;
+    width: 0.65rem;
+    background: #fff;
+    font-size: 0.4rem;
+    color: #000;
+    text-align: center;
+    line-height: 0.85rem;
+    border-radius: 0.1rem;
+    -webkit-box-shadow: 0 1PX #909396;
+            box-shadow: 0 1PX #909396;
+    cursor: pointer;
+}
+/* 字面A键*/
+.ys-keyboard-aBox{
+    margin-left: 0.4rem;
+}
+/* 特殊按键*/
+.ys-keyboard-noneBtn, .ys-keyboard-abcBox, .ys-keyboard-delBtn, .ys-keyboard-backBtn, .ys-keyboard-switchBtn{
+    background: #adb3bc;
+    width: 1.025rem;
+    font-size: 0.36rem;
+}
+/* 删除键*/
+.ys-keyboard-delBtn{
+    margin-right: 0;
+    background: #adb3bc url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTEzMDQ5NTEyNzM5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjU4NDMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTg3NC45NTA0NDEgODQ3LjcxNzEwNyAzMTUuNTA2NTk2IDg0Ny43MTcxMDcgNC41MTU1NTkgNTE1LjAwNjIzMyAzMTUuNTA2NTk2IDE4Mi4yOTMxMDFsNTU5LjQ0NjEwMyAwYzc5LjI4MTkyIDAgMTQxLjI4Mjc5OCA2My44MzQxOTQgMTQxLjI4Mjc5OCAxNDIuNTkyMzFsMCAzODAuMjQzOTAyQzEwMTYuMjM1NDk3IDc4My44NjkzNjYgOTU0LjIzNDYxOSA4NDcuNzE3MTA3IDg3NC45NTA0NDEgODQ3LjcxNzEwN0w4NzQuOTUwNDQxIDg0Ny43MTcxMDd6TTk2MS45NzY1NDUgMzY3LjgyODM3M2MwLTcxLjI2MjI4OC0zMy40MTI4NzYtMTI5LjAxNDAyNS0xMDUuMjU5OTI5LTEyOS4wMTQwMjVsLTUxMS41NDUwNTcgMEw4MS4zOTUyMDIgNTE1LjAwNjIzM2wyNjEuNTE4NTc3IDI3Ni4xODk2MjcgNTEzLjgwMjgzNyAwYzcxLjg1MTU2OSAwIDEwNS4yNTk5MjktMzIuOTI5NzExIDEwNS4yNTk5MjktMTA0LjE3ODQ1M0w5NjEuOTc2NTQ1IDM2Ny44MjgzNzMgOTYxLjk3NjU0NSAzNjcuODI4Mzczek03MzQuOTQzMjg5IDY4Ni4xMDc1MjJsLTEyMy44NTk1MTUtMTIzLjg2MTc3My0xMjguMzc5NTg5IDEyOC4zNzczMzEtNDQuOTgxNzM3LTQ0Ljk4MTczNyAxMjguMzc3MzMxLTEyMy44NjE3NzMtMTMyLjg5Mjg5LTEzMi44OTUxNDggNDAuNDY2MTc5LTQwLjQ2MzkyMSAxMzIuODk1MTQ4IDEyOC4zNzczMzEgMTM1LjE0ODQxMi0xMzIuODkyODkgNDQuOTgzOTk1IDQyLjcyMTctMTM1LjE1MjkyNyAxMzIuODk1MTQ4IDEyMy44NjQwMzEgMTI2LjExOTU1Mkw3MzQuOTQzMjg5IDY4Ni4xMDc1MjIgNzM0Ljk0MzI4OSA2ODYuMTA3NTIyeiIgcC1pZD0iNTg0NCI+PC9wYXRoPjwvc3ZnPg==) no-repeat center center;
+    background-size: 0.48rem;
+}
+/* 改变按钮被按下时的UI*/
+.ys-keyboard-keyActive{
+    background: #c0c1c6;
+}
+/* 删除按钮按下时的UI*/
+.ys-keyboard-delBtn.ys-keyboard-keyActive{
+    background: #c0c1c6 url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTEzMDQ2Nzk5OTE2IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDE0NDAgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9Ijk5NiIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIyODEuMjUiIGhlaWdodD0iMjAwIj48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwvc3R5bGU+PC9kZWZzPjxwYXRoIGQ9Ik05MTQuODAzMiA1MTJsMjAzLjU4NC0yMDMuNTg0YTMxLjg0IDMxLjg0IDAgMCAwIDAuMDY0LTQ1LjMxMiAzMS45NjggMzEuOTY4IDAgMCAwLTQ1LjMxMiAwLjA2NGwtMjAzLjYxNiAyMDMuNTg0LTIwMy41ODQtMjAzLjU4NGEzMS44NCAzMS44NCAwIDAgMC00NS4zMTItMC4wNjQgMzEuOTY4IDMxLjk2OCAwIDAgMCAwLjA2NCA0NS4zMTJMODI0LjI3NTIgNTEybC0yMDMuNTg0IDIwMy41ODRhMzEuODQgMzEuODQgMCAwIDAtMC4wNjQgNDUuMzEyIDMxLjk2OCAzMS45NjggMCAwIDAgNDUuMzEyLTAuMDY0bDIwMy41ODQtMjAzLjU4NCAyMDMuNjE2IDIwMy41ODRhMzEuODQgMzEuODQgMCAwIDAgNDUuMzEyIDAuMDY0IDMxLjk2OCAzMS45NjggMCAwIDAtMC4wNjQtNDUuMzEyTDkxNC44MDMyIDUxMnpNMTguOTMxMiA1NTcuNDRhNjQgNjQgMCAwIDEgMC05MC44OEw0NjIuODY3MiAyMi42NTZDNDc1LjM3OTIgMTAuMTQ0IDUwMC4xMTUyIDAgNTE3LjQ5MTIgMGg3MDMuNzc2YTE5Mi4xNiAxOTIuMTYgMCAwIDEgMTkyLjI1NiAxOTJ2NjQwYzAgMTA2LjA0OC04Ni4wNDggMTkyLTE5Mi4yNTYgMTkySDUxNy40OTEyYy0xNy42NjQgMC00Mi4xNzYtMTAuMjQtNTQuNjI0LTIyLjY1NkwxOC45NjMyIDU1Ny40NHoiIGZpbGw9IiMzMzMzMzMiIHAtaWQ9Ijk5NyI+PC9wYXRoPjwvc3ZnPg==) no-repeat center center;
+    background-size: 0.48rem;
+}
+/* 数字键盘*/
+.ys-keyboard-numberKeyboard{
+    width: 100%;
+    height: 100%;
+}
+.ys-keyboard-numKeyBox{
+    float: left;
+    width: 33.33%;
+    height: 25%;
+    background: #fff;
+    border-top: 1PX solid #d1d5da;
+    border-right: 1PX solid #d1d5da;
+}
+.ys-keyboard-numKey{
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 1.07rem;
+    font-size: 0.6rem;
+    color: #1a1a1a;
+}
+/* URL键盘*/
+.ys-keyboard-switchBtn{
+    background: #adb3bc url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTEzNDM5MDE2MzE1IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIzMzgiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTg3Ni44IDc0OC44SDM3Ny42Yy03MC40IDAtMTI4LTU3LjYtMTI4LTEyOFYxMjhjMC03MC40IDU3LjYtMTI4IDEyOC0xMjhoNDk5LjJjNzAuNCAwIDEyOCA1Ny42IDEyOCAxMjh2NDk5LjJjMCA3MC40LTU3LjYgMTIxLjYtMTI4IDEyMS42eiBtNjQtNjIwLjhjMC0zMi0yNS42LTY0LTY0LTY0SDM3Ny42Yy0zMiAwLTY0IDI1LjYtNjQgNjR2NDk5LjJjMCAzMiAyNS42IDY0IDY0IDY0aDQ5OS4yYzMyIDAgNjQtMjUuNiA2NC02NFYxMjh6TTY0IDM3Ny42djQ5OS4yYzAgMzIgMjUuNiA2NCA2NCA2NGg0OTkuMmMzMiAwIDY0LTI1LjYgNjQtNjR2LTY0aDY0djY0YzAgNzAuNC01Ny42IDEyOC0xMjggMTI4SDEyOGMtNzAuNCAwLTEyOC01Ny42LTEyOC0xMjhWMzc3LjZjMC03MC40IDU3LjYtMTI4IDEyOC0xMjhoNjR2NjRIMTI4Yy0zOC40IDAtNjQgMjUuNi02NCA2NHoiIHAtaWQ9IjIzMzkiPjwvcGF0aD48L3N2Zz4=) no-repeat center center;
+    background-size: 0.48rem;
+    padding-left: 0.12rem;
+    line-height: 0.7rem;
+}
+/* 显示键盘动画*/
+.ys-keyboard-showKeys{
+    -webkit-animation: ys-keyboard-showKeyboard .3s;
+            animation: ys-keyboard-showKeyboard .3s;
+}
+/* 隐藏键盘动画*/
+.ys-keyboard-hideKeys .ys-keyboard-keyboardBg{
+        display: none;
+    }
+.ys-keyboard-hideKeys .ys-keyboard-keys{
+        -webkit-animation: ys-keyboard-hideKeyboard .3s forwards;
+                animation: ys-keyboard-hideKeyboard .3s forwards;
+    }
+/* 模拟的输入框*/
+.ys-keyboard-input{
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    color: inherit;
+    font-size: inherit;
+    overflow: hidden;
+}
+/* 单个按键的内容*/
+.ys-keyboard-keyValue{
+    position: relative;
+    float: left;
+    line-height: inherit;
+    color: inherit;
+    font-size: inherit;
+}
+/* 光标*/
+.ys-keyboard-cursor::after{
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1PX;
+    background: #108ee9;
+    -webkit-animation: ys-keyboard-cursor 1s infinite linear;
+            animation: ys-keyboard-cursor 1s infinite linear;
+}
+/* 光标在左边显示*/
+.ys-keyboard-leftCursor::after{
+    right: auto;
+    left: 0;
+}
+/* 动画*/
+@-webkit-keyframes ys-keyboard-showKeyboard{
+    0%{
+        bottom: -4.5rem;
+    }
+    100%{
+        bottom: 0;
+    }
+}
+@keyframes ys-keyboard-showKeyboard{
+    0%{
+        bottom: -4.5rem;
+    }
+    100%{
+        bottom: 0;
+    }
+}
+@-webkit-keyframes ys-keyboard-hideKeyboard{
+    0%{
+        bottom: 0;
+    }
+    100%{
+        bottom: -4.5rem;
+    }
+}
+@keyframes ys-keyboard-hideKeyboard{
+    0%{
+        bottom: 0;
+    }
+    100%{
+        bottom: -4.5rem;
+    }
+}
+@-webkit-keyframes ys-keyboard-cursor{
+    0%{
+        background: #108ee9;
+    }
+    40%{
+        background: #108ee9;
+    }
+    50%{
+        background: transparent;
+    }
+    90%{
+        background: transparent;
+    }
+    100%{
+        background: #108ee9;
+    }
+}
+@keyframes ys-keyboard-cursor{
+    0%{
+        background: #108ee9;
+    }
+    40%{
+        background: #108ee9;
+    }
+    50%{
+        background: transparent;
+    }
+    90%{
+        background: transparent;
+    }
+    100%{
+        background: #108ee9;
+    }
+}

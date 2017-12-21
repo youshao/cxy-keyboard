@@ -1,6 +1,3 @@
-import { setTimeout, clearInterval, clearTimeout, setInterval } from 'timers';
-import { fail } from 'assert';
-
 const styles = require('./index.scss');
 
 /**
@@ -686,9 +683,8 @@ class CxyKeyboard {
                     this.hideKeyboard = true;
                 }
                 CxyKeyboard.handleOtherClickId = undefined;
-            }, 450);
+            }, 500);
         }
-
     }
 
     /**

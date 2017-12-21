@@ -4,18 +4,19 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const pxtorem = require('postcss-pxtorem');
 
 const config = {
     entry: {
         // 文件入口配置
-        main: './keyboard/index.js'
+        main: './keyboard/index.js',
     },
 
     output: {
         // 文件输出配置
 
-        filename: 'bundle.js',
+        filename: 'cxy-keyboard.js',
         // 命名生成的JS
 
         path: path.resolve(__dirname, 'dist'),
@@ -37,41 +38,47 @@ const config = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                ],
+                // use: [
+                //     'style-loader',
+                //     'css-loader',
+                // ],
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader'
+                }),
             },
             {
                 test: /\.scss$/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            modules: true,
-                            sourceMap: true,
-                            importLoaders: 1,
-                            localIdentName: 'ys-keyboard-[local]'
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            parser: 'postcss-scss',
-                            sourceMap: true,
-                            plugins: (loader) => [
-                                require('precss')(),
-                                require('autoprefixer')(),
-                                require('rucksack-css')(),
-                                pxtorem({
-                                    rootValue: 100,
-                                    propWhiteList: [],
-                                })
-                            ]
-                        }
-                    },
-                ]
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                sourceMap: true,
+                                importLoaders: 1,
+                                localIdentName: 'ys-keyboard-[local]'
+                            }
+                        },
+                        {
+                            loader: 'postcss-loader',
+                            options: {
+                                parser: 'postcss-scss',
+                                sourceMap: true,
+                                plugins: (loader) => [
+                                    require('precss')(),
+                                    require('autoprefixer')(),
+                                    require('rucksack-css')(),
+                                    pxtorem({
+                                        rootValue: 100,
+                                        propWhiteList: [],
+                                    })
+                                ]
+                            }
+                        },
+                    ]
+                }),
             },
             {
                 test: /\.(otf|eot|svg|ttf|woff|woff2).*$/,
@@ -107,6 +114,8 @@ const config = {
         // webapck 会给编译好的代码片段一个id用来区分
         // 而这个插件会让webpack在id分配上优化并保持一致性。
         // 具体是的优化是：webpack就能够比对id的使用频率和分布来得出最短的id分配给使用频率高的模块
+
+        new ExtractTextPlugin('cxy-keyboard.css'),
 
         new webpack.optimize.UglifyJsPlugin({
             compressor: {
