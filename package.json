@@ -1,6 +1,6 @@
 {
   "name": "cxy-keyboard",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "H5业务使用的违章键盘",
   "main": "./keyboard/index.js",
   "scripts": {

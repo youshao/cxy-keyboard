@@ -677,7 +677,7 @@ class CxyKeyboard {
             // 句柄ID存在 需要等待句柄Id执行完毕才能执行下一次操作
             return false;
         } else {
-            // 延迟关闭 避免点击的Dom元素不需要关闭
+            // 延迟450毫秒关闭（UI webview点击延迟400毫秒左右） 避免点击的Dom元素不需要关闭
             CxyKeyboard.handleOtherClickId = setTimeout(() => {
                 // 判断是否应该隐藏键盘
                 if (this.isShow && this.hideKeyboard) {
@@ -686,7 +686,7 @@ class CxyKeyboard {
                     this.hideKeyboard = true;
                 }
                 CxyKeyboard.handleOtherClickId = undefined;
-            }, 300);
+            }, 450);
         }
 
     }
@@ -704,13 +704,13 @@ class CxyKeyboard {
             CxyKeyboard.handleOtherClickId = undefined;
 
             // 按钮回复可点击后 还原关闭标识符（按钮不可点击时还原，在点击过快时会出现键盘被隐藏的状态）
-            if(this.canClickBtn){
+            if (this.canClickBtn) {
                 /**
                  * 还原关闭标识符为可关闭 
                  * 如果不还原，在显示键盘后直接点击空白处则无法关闭键盘
                  * 因为这时候的this.hideKeyboard为false；
                  */
-                this.hideKeyboard = true; 
+                this.hideKeyboard = true;
             }
         }
     }
