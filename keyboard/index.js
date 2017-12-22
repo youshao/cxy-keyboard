@@ -71,6 +71,12 @@ class CxyKeyboard {
 
     /**
      * 初始化
+     * @param {object} params 参数
+     * @param {string} params.domId 键盘Dom元素的Id 默认：cxyKeyboard
+     * @param {array} params.inputs placeholder数组
+     * @param {string} params.inputs.selectors css选择器
+     * @param {string} params.inputs.placeholder 无输入时的提示
+     * @param {string} params.inputs.placeholderColor placeholder的字体颜色，支持css所支持的字符串
      */
     init(params = {}) {
         const { domId, inputs } = params;
