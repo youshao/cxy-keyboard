@@ -59,7 +59,7 @@
         }(document, window);
 
         // 实例化键盘
-        window.keyboard = new cxyKeyboard({
+        window.cxyKeyboard.init({
             inputs: [{
                 selectors: '#carNumberKeyboard',
                 placeholder: '车牌号码键盘(限制了长度为8，且选择车牌前缀后自动切换成字母键盘，只自动切换一次)',
@@ -87,35 +87,32 @@
         });
 
         // 内容发生改变
-        keyboard.onChange = function (value, keyboardId) {
+        cxyKeyboard.onChange = function (value, keyboardId) {
             
             if (keyboardId === '#carNumberKeyboard') {
                 if(!window.autoSwitchKeyboard){
                     window.autoSwitchKeyboard = true; // 只自动帮用户切换一次键盘
-                    if(value.length === 0){
-                        // 需要先输入车牌前缀
-                        keyboard.switchKeyboard('carNumberPre');
-                    }else if(value.length === 1){
+                    if(value.length === 1){
                         // 自动切换成字母键盘
-                        keyboard.switchKeyboard('ABC');
+                        cxyKeyboard.switchKeyboard('ABC');
                     }
                 }
             }
         };
 
         // 光标发生改变
-        keyboard.cursorChange = function (cursorIndex, keyboardId) {
+        cxyKeyboard.cursorChange = function (cursorIndex, keyboardId) {
             console.log("光标发生改变", cursorIndex, keyboardId)
         };
 
         function show(id) {
             var param = {
                 selectors: id,
-                animation: !keyboard.isShow, // 键盘不存在时则显示动画
+                animation: !cxyKeyboard.isShow, // 键盘不存在时则显示动画
             }
 
             // 键盘如果存在，则切换键盘。不存在则显示键盘
-            keyboard.show(param, keyboard.isShow);
+            cxyKeyboard.show(param, cxyKeyboard.isShow);
         }
     </script>
 </body>

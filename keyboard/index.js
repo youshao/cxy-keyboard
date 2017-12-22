@@ -70,6 +70,19 @@ class CxyKeyboard {
     }
 
     /**
+     * 初始化
+     */
+    init(params = {}) {
+        const { domId, inputs } = params;
+
+        /** 键盘组件的domId */
+        this.domId = domId || 'cxyKeyboard';
+
+        // 初始化输入框
+        this.inputsInit(inputs);
+    }
+
+    /**
      * 重置
      */
     reset() {
@@ -147,7 +160,7 @@ class CxyKeyboard {
                         case 'BACK':
                             return {
                                 name: item,
-                                value: '返回',
+                                value: '地区',
                                 className: styles.backBtn
                             };
                         case 'DEL':
@@ -674,7 +687,7 @@ class CxyKeyboard {
             // 句柄ID存在 需要等待句柄Id执行完毕才能执行下一次操作
             return false;
         } else {
-            // 延迟450毫秒关闭（UI webview点击延迟400毫秒左右） 避免点击的Dom元素不需要关闭
+            // 延迟500毫秒关闭（UI webview点击延迟400毫秒左右） 避免点击的Dom元素不需要关闭
             CxyKeyboard.handleOtherClickId = setTimeout(() => {
                 // 判断是否应该隐藏键盘
                 if (this.isShow && this.hideKeyboard) {
@@ -699,7 +712,7 @@ class CxyKeyboard {
             // 清除句柄id
             CxyKeyboard.handleOtherClickId = undefined;
 
-            // 按钮回复可点击后 还原关闭标识符（按钮不可点击时还原，在点击过快时会出现键盘被隐藏的状态）
+            // 按钮恢复可点击后 还原关闭标识符（按钮不可点击时还原，在点击过快时会出现键盘被隐藏的状态）
             if (this.canClickBtn) {
                 /**
                  * 还原关闭标识符为可关闭 
@@ -1018,4 +1031,5 @@ CxyKeyboard.longPressKeyboardFunId = undefined;
 /** 全局触摸事件的句柄Id 用于判断是否应该隐藏键盘 */
 CxyKeyboard.handleOtherClickId = undefined;
 
-module.exports = CxyKeyboard;
+/** 导出实例，避免多个实例存在多个监听事件以及事件被覆盖等问题 */
+module.exports = new CxyKeyboard();
