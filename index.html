@@ -69,6 +69,7 @@
                 selectors: '#numberKeyboard',
                 placeholder: '数字键盘（限制了长度为11）',
                 type: 'number',
+                value: '13800000000',
                 maxLength: 11,
             }, {
                 selectors: '#digitKeyboard',
@@ -88,11 +89,11 @@
 
         // 内容发生改变
         cxyKeyboard.onChange = function (value, keyboardId) {
-            
+
             if (keyboardId === '#carNumberKeyboard') {
-                if(!window.autoSwitchKeyboard){
+                if (!window.autoSwitchKeyboard) {
                     window.autoSwitchKeyboard = true; // 只自动帮用户切换一次键盘
-                    if(value.length === 1){
+                    if (value.length === 1) {
                         // 自动切换成字母键盘
                         cxyKeyboard.switchKeyboard('ABC');
                     }

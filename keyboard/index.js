@@ -11,13 +11,9 @@ class CxyKeyboard {
      * @constructor
      * @param {object} params 参数
      * @param {string} params.domId 键盘Dom元素的Id 默认：cxyKeyboard
-     * @param {array} params.inputs placeholder数组
-     * @param {string} params.inputs.selectors css选择器
-     * @param {string} params.inputs.placeholder 无输入时的提示
-     * @param {string} params.inputs.placeholderColor placeholder的字体颜色，支持css所支持的字符串
      */
     constructor(params = {}) {
-        const { domId, inputs } = params;
+        const { domId } = params;
 
         /** 键盘对象 */
         this.keys = this.defaultKeys();
@@ -62,9 +58,6 @@ class CxyKeyboard {
         /** 保存所有input框在显示键盘时的接收到的参数 */
         this.inputs = {};
 
-        // 初始化输入框
-        this.inputsInit(inputs);
-
         // 其他JS操作
         this.other();
     }
@@ -73,10 +66,14 @@ class CxyKeyboard {
      * 初始化
      * @param {object} params 参数
      * @param {string} params.domId 键盘Dom元素的Id 默认：cxyKeyboard
-     * @param {array} params.inputs placeholder数组
-     * @param {string} params.inputs.selectors css选择器
-     * @param {string} params.inputs.placeholder 无输入时的提示
-     * @param {string} params.inputs.placeholderColor placeholder的字体颜色，支持css所支持的字符串
+     * @param {inputArray} params.inputs placeholder数组
+     * @param {string} param.input.selectors css选择器（不支持选input或textarea等输入标签，因为这些标签会调起系统键盘）
+     * @param {string} param.input.type 键盘的类型 默认：ABC（字母数字键盘）
+     * @param {boolean} param.input.animation 显示动画 默认键盘非显示状态时显示动画，键盘处于显示状态时不显示动画
+     * @param {string} param.input.value 已经输入的内容
+     * @param {string} param.input.backgroundColor 蒙层背景色 不传时 不显示背景 支持css所支持的数值 例如（rgba(0,0,0,1)、#FFF)
+     * @param {string} param.input.placeholder 无输入时的提示
+     * @param {string} param.input.placeholderColor placeholder的字体颜色，支持css所支持的字符串
      */
     init(params = {}) {
         const { domId, inputs } = params;
@@ -386,7 +383,7 @@ class CxyKeyboard {
      * @param {object} param 参数
      * @param {string} param.selectors css选择器（不支持选input或textarea等输入标签，因为这些标签会调起系统键盘）
      * @param {string} param.type 键盘的类型 默认：ABC（字母数字键盘）
-     * @param {boolean} param.animation 显示动画 默认：true 
+     * @param {boolean} param.animation 显示动画 默认键盘非显示状态时显示动画，键盘处于显示状态时不显示动画 
      * @param {string} param.value 已经输入的内容
      * @param {string} param.backgroundColor 蒙层背景色 不传时 不显示背景 支持css所支持的数值 例如（rgba(0,0,0,1)、#FFF)
      * @param {string} param.placeholder 无输入时的提示
@@ -721,8 +718,7 @@ class CxyKeyboard {
             // 按钮恢复可点击后 还原关闭标识符（按钮不可点击时还原，在点击过快时会出现键盘被隐藏的状态）
             if (this.canClickBtn) {
                 /**
-                 * 还原关闭标识符为可关闭 
-                 * 如果不还原，在显示键盘后直接点击空白处则无法关闭键盘
+                 * 还原关闭标识符为可关闭   如果不还原，在显示键盘后直接点击空白处则无法关闭键盘
                  * 因为这时候的this.hideKeyboard为false；
                  */
                 this.hideKeyboard = true;
@@ -734,11 +730,20 @@ class CxyKeyboard {
     * 修改输入框的内容以及控制光标
     * @param {object} param 参数
     * @param {boolean} param.showCursor 显示光标
-    * @param {boolean} param.selectors css选择器 选择需要修改的输入框 默认：当前活跃的输入框
+    * @param {string} param.selectors css选择器 选择需要修改的输入框 默认：当前活跃的输入框
+    * @param {string} param.value 输入框要显示的内容 默认：this.value
+    * @param {string} param.placeholder 无输入时的提示
+    * @param {string} param.placeholderColor placeholder的字体颜色，支持css所支持的字符串
     */
     setInputValue(param = {}) {
         // 内容发生变化时 会自动触发此函数
-        const { showCursor = true, selectors = this.showParam.selectors } = param;
+        const {
+            showCursor = true,
+            selectors = this.showParam.selectors,
+            value = this.value,
+            placeholder = this.showParam.placeholder,
+            placeholderColor = this.showParam.placeholderColor || '#ababab',
+        } = param;
 
         // 判断是否显示光标
         const isShowCursor = showCursor && this.isShow;
@@ -746,10 +751,10 @@ class CxyKeyboard {
         const dom = this.getInputDom(selectors);
 
         if (dom) {
-            const value = this.value.split(''); // 转为数组
+            const valueArr = value.split('');
 
             // 当前高亮显示的位置
-            let index = this.cursorIndex !== undefined ? this.cursorIndex : this.showParam.cursorIndex || value.length - 1;
+            let index = this.cursorIndex !== undefined ? this.cursorIndex : this.showParam.cursorIndex || valueArr.length - 1;
 
             // 光标的样式名称
             let cursorClassName = styles.cursor;
@@ -759,7 +764,7 @@ class CxyKeyboard {
             }
 
             // 输入的内容
-            const values = value.map((item, i) =>
+            const values = valueArr.map((item, i) =>
                 `<span 
                     class="${styles.keyValue + (isShowCursor && i === index ? ' ' + cursorClassName : '')}" 
                     keyboard-value-index="${i}"
@@ -775,7 +780,6 @@ class CxyKeyboard {
                 p.setAttribute('keyboard-input-id', selectors);
                 p.addEventListener('touchstart', (e) => this.handleInput(e));
             } else {
-                const { placeholder, placeholderColor = '#ccc' } = this.showParam;
                 p.innerHTML = placeholder
                     ? `
                     <span 
@@ -829,17 +833,12 @@ class CxyKeyboard {
 
     /**
      * inputs初始化
-     * @param {array} inputs placeholder数组
-     * [{
-     * @param {string} selectors css选择器
-     * @param {string} placeholder 无输入时的提示
-     * @param {string} placeholderColor placeholder的字体颜色，支持css所支持的字符串
-     * }]
+     * @param {inputArray} inputs placeholder数组
      */
     inputsInit(inputs) {
         if (inputs && inputs.length > 0) {
             inputs.map(item => {
-                const { selectors, placeholder, placeholderColor = '#ccc' } = item;
+                const { selectors } = item;
 
                 // 保存input的初始参数
                 this.inputs[selectors] = Object.assign({}, this.inputs[selectors], item);
@@ -847,17 +846,7 @@ class CxyKeyboard {
                 // 初始化placeholder
                 const dom = this.getInputDom(selectors);
                 if (dom) {
-                    const p = document.createElement('p');
-                    p.className = styles.input;
-                    p.innerHTML = placeholder
-                        ? `
-                        <span 
-                            class="${styles.keyValue}" 
-                            style="color:${placeholderColor}"
-                            >${placeholder}</span>`
-                        : '';
-                    dom.innerHTML = ''; // 清空内容
-                    dom.appendChild(p); // 显示输入的内容
+                    this.setInputValue({ showCursor: false, ...item });
                 }
                 return dom;
             })
