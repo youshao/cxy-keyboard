@@ -434,7 +434,7 @@ class CxyKeyboard {
         // 设置内容和光标的位置
         this.setInputValue();
 
-        return this.createEle(this.domId, 'div', `
+        const ele = this.createEle(this.domId, 'div', `
                 <div class="${styles.keyboard}">
                     <div class="${styles.keys + (animation ? ' ' + styles.showKeys : '')}">
                         ${this.getKeysDomString(type)}
@@ -442,6 +442,10 @@ class CxyKeyboard {
                     ${ backgroundColor ? `<div class="${styles.keyboardBg}" keyboard-hide="1" style="background:${backgroundColor}" ></div>` : ''}
                 </div>
             `)
+
+        this.dispatchEvent('cxyKeyboard_show');
+
+        return ele;
     }
 
     /**
@@ -462,6 +466,7 @@ class CxyKeyboard {
             this.removeKeyboardDomId = setTimeout(() => {
                 dom.remove(); // 移除键盘Dom元素
                 this.reset(); // 重置
+                this.dispatchEvent('cxyKeyboard_hide');
             }, 300); // 延迟300毫秒删除键盘 等待动画结束
         }
 
@@ -500,6 +505,7 @@ class CxyKeyboard {
     switchKeyboard(type = 'ABC') {
         const param = Object.assign({}, this.showParam, { type, value: this.value, animation: false });
         this.show(param, true);
+        this.dispatchEvent('cxyKeyboard_switchKeyboard');
     }
 
     /**
@@ -525,6 +531,7 @@ class CxyKeyboard {
         } else {
             this.value += value;
         }
+        this.dispatchEvent('cxyKeyboard_addValue');
     }
 
     /**
@@ -548,6 +555,7 @@ class CxyKeyboard {
         } else {
             this.value = this.value.slice(0, this.value.length - 1)
         }
+        this.dispatchEvent('cxyKeyboard_deleteValue');
     }
 
     /**
@@ -876,6 +884,17 @@ class CxyKeyboard {
         const browser = this.browser();
         return browser.versions.android;
     };
+
+    /**
+     * 分派事件
+     */
+    dispatchEvent(name) {
+        const ev = new Event(name, {
+            bubbles: 'true',
+            cancelable: 'true'
+        });
+        document.dispatchEvent(ev);
+    }
 
     /**
      * 其他JS操作
