@@ -804,9 +804,9 @@ class CxyKeyboard {
     /**
      * 键盘输入的内容发生变化
      * @param {string} value 内容
-     * @param {object} param 返回调用show()时的param参数
+     * @param {string} activeId 当前活跃输入框的css选择器
      */
-    onChange(value, param) {
+    onChange(value, activeId) {
         // 内容发生变化时 会自动触发此函数
     }
 
