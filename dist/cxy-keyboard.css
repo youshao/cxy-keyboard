@@ -32,12 +32,15 @@
 /* 键盘按键*/
 .ys-keyboard-keys{
     position: fixed;
-    left: 0;
+    left: 50%;
     right: 0;
     bottom: 0;
     right: 0;
     height: 4.3rem;
     width: 100%;
+    max-width: 540PX;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
     background: #d1d5da;
     color: #000;
     z-index: 9999

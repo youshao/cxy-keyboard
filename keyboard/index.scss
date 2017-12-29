@@ -35,12 +35,14 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 // 键盘按键
 .keys{
     position: fixed;
-    left: 0;
+    left: 50%;
     right: 0;
     bottom: 0;
     right: 0;
     height: 430px;
     width: 100%;
+    max-width: 540PX;
+    transform: translateX(-50%);
     background: #d1d5da;
     color: #000;
     z-index: 9999;
