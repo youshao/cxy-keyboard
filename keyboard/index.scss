@@ -35,12 +35,12 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 // 键盘按键
 .keys{
     position: fixed;
-    left: 50%;
+    left: 0;
     right: 0;
     bottom: 0;
+    right: 0;
     height: 430px;
-    width: 750px;
-    transform: translateX(-50%);
+    width: 100%;
     background: #d1d5da;
     color: #000;
     z-index: 9999;
@@ -73,13 +73,17 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 .keyBox{
     float: left;
     overflow: hidden;
+    min-width: 10%;
+}
+.keyBox15{
+    min-width: 15%;
 }
 
 // 按键
 .key{
-    float: left;
     position: relative;
-    margin: 10px 5px;
+    margin: 10px auto;
+    display: block;
     height: 85px;
     width: 65px;
     background: #fff;
@@ -93,8 +97,11 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 }
 
 // 字面A键
+.aBoxBox{
+    margin-left: 5%;
+}
 .aBox{
-    margin-left: 40px;
+    
 }
 
 // 特殊按键
@@ -106,7 +113,6 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 
 // 删除键
 .delBtn{
-    margin-right: 0;
     background: #adb3bc url("./images/svg/del.svg") no-repeat center center;
     background-size: 48px;
 }

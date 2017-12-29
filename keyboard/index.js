@@ -158,19 +158,22 @@ class CxyKeyboard {
                             return {
                                 name: item,
                                 value: item,
-                                className: styles.aBox
+                                className: styles.aBox,
+                                boxClassName: styles.aBoxBox
                             }
                         case 'BACK':
                             return {
                                 name: item,
                                 value: '地区',
-                                className: styles.backBtn
+                                className: styles.backBtn,
+                                boxClassName: styles.keyBox15
                             };
                         case 'DEL':
                             return {
                                 name: 'DEL',
                                 value: '',
-                                className: styles.delBtn
+                                className: styles.delBtn,
+                                boxClassName: styles.keyBox15
                             }
                         default:
                             return {
@@ -190,13 +193,15 @@ class CxyKeyboard {
                             return {
                                 name: item,
                                 value: item,
-                                className: styles.abcBox
+                                className: styles.abcBox,
+                                boxClassName: styles.keyBox15
                             }
                         case 'DEL':
                             return {
                                 name: 'DEL',
                                 value: '',
-                                className: styles.delBtn
+                                className: styles.delBtn,
+                                boxClassName: styles.keyBox15
                             }
                         default:
                             return {
@@ -216,19 +221,23 @@ class CxyKeyboard {
                             return {
                                 name: item,
                                 value: item,
-                                className: styles.aBox
+                                className: styles.aBox,
+                                boxClassName: styles.aBoxBox
+                                
                             }
                         case 'SWITCH_URL':
                             return {
                                 name: 'SWITCH_URL', // 切换到大写字母+数字键盘
                                 value: 'A',
-                                className: styles.switchBtn
+                                className: styles.switchBtn,
+                                boxClassName: styles.keyBox15
                             };
                         case 'DEL':
                             return {
                                 name: 'DEL',
                                 value: '',
-                                className: styles.delBtn
+                                className: styles.delBtn,
+                                boxClassName: styles.keyBox15
                             }
                         default:
                             return {
@@ -247,19 +256,22 @@ class CxyKeyboard {
                             return {
                                 name: item,
                                 value: item,
-                                className: styles.aBox
+                                className: styles.aBox,
+                                boxClassName: styles.aBoxBox
                             }
                         case 'SWITCH_url':
                             return {
                                 name: 'SWITCH_url', // 切换到小写字母+符号键盘
                                 value: 'a',
-                                className: styles.switchBtn
+                                className: styles.switchBtn,
+                                boxClassName: styles.keyBox15
                             };
                         case 'DEL':
                             return {
                                 name: 'DEL',
                                 value: '',
-                                className: styles.delBtn
+                                className: styles.delBtn,
+                                boxClassName: styles.keyBox15
                             }
                         default:
                             return {
@@ -370,7 +382,7 @@ class CxyKeyboard {
         } else {
             return `<div class="${styles.defaultKeyboard}">
                         ${keys.map(item => `
-                            <div keyboard-key-name="${item.name}" class="${styles.keyBox}">
+                            <div keyboard-key-name="${item.name}" class="${styles.keyBox + ' ' + item.boxClassName}">
                                 <span class="${styles.key + ' ' + (item.className || '')}">${item.value || ''}</span>
                             </div>
                         `).join('')}
