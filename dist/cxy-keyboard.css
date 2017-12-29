@@ -32,13 +32,12 @@
 /* 键盘按键*/
 .ys-keyboard-keys{
     position: fixed;
-    left: 50%;
+    left: 0;
     right: 0;
     bottom: 0;
+    right: 0;
     height: 4.3rem;
-    width: 7.5rem;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    width: 100%;
     background: #d1d5da;
     color: #000;
     z-index: 9999
@@ -68,12 +67,16 @@
 .ys-keyboard-keyBox{
     float: left;
     overflow: hidden;
+    min-width: 10%;
+}
+.ys-keyboard-keyBox15{
+    min-width: 15%;
 }
 /* 按键*/
 .ys-keyboard-key{
-    float: left;
     position: relative;
-    margin: 0.1rem 0.05rem;
+    margin: 0.1rem auto;
+    display: block;
     height: 0.85rem;
     width: 0.65rem;
     background: #fff;
@@ -87,8 +90,11 @@
     cursor: pointer;
 }
 /* 字面A键*/
+.ys-keyboard-aBoxBox{
+    margin-left: 5%;
+}
 .ys-keyboard-aBox{
-    margin-left: 0.4rem;
+    
 }
 /* 特殊按键*/
 .ys-keyboard-noneBtn, .ys-keyboard-abcBox, .ys-keyboard-delBtn, .ys-keyboard-backBtn, .ys-keyboard-switchBtn{
@@ -98,7 +104,6 @@
 }
 /* 删除键*/
 .ys-keyboard-delBtn{
-    margin-right: 0;
     background: #adb3bc url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTEzMDQ5NTEyNzM5IiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjU4NDMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTg3NC45NTA0NDEgODQ3LjcxNzEwNyAzMTUuNTA2NTk2IDg0Ny43MTcxMDcgNC41MTU1NTkgNTE1LjAwNjIzMyAzMTUuNTA2NTk2IDE4Mi4yOTMxMDFsNTU5LjQ0NjEwMyAwYzc5LjI4MTkyIDAgMTQxLjI4Mjc5OCA2My44MzQxOTQgMTQxLjI4Mjc5OCAxNDIuNTkyMzFsMCAzODAuMjQzOTAyQzEwMTYuMjM1NDk3IDc4My44NjkzNjYgOTU0LjIzNDYxOSA4NDcuNzE3MTA3IDg3NC45NTA0NDEgODQ3LjcxNzEwN0w4NzQuOTUwNDQxIDg0Ny43MTcxMDd6TTk2MS45NzY1NDUgMzY3LjgyODM3M2MwLTcxLjI2MjI4OC0zMy40MTI4NzYtMTI5LjAxNDAyNS0xMDUuMjU5OTI5LTEyOS4wMTQwMjVsLTUxMS41NDUwNTcgMEw4MS4zOTUyMDIgNTE1LjAwNjIzM2wyNjEuNTE4NTc3IDI3Ni4xODk2MjcgNTEzLjgwMjgzNyAwYzcxLjg1MTU2OSAwIDEwNS4yNTk5MjktMzIuOTI5NzExIDEwNS4yNTk5MjktMTA0LjE3ODQ1M0w5NjEuOTc2NTQ1IDM2Ny44MjgzNzMgOTYxLjk3NjU0NSAzNjcuODI4Mzczek03MzQuOTQzMjg5IDY4Ni4xMDc1MjJsLTEyMy44NTk1MTUtMTIzLjg2MTc3My0xMjguMzc5NTg5IDEyOC4zNzczMzEtNDQuOTgxNzM3LTQ0Ljk4MTczNyAxMjguMzc3MzMxLTEyMy44NjE3NzMtMTMyLjg5Mjg5LTEzMi44OTUxNDggNDAuNDY2MTc5LTQwLjQ2MzkyMSAxMzIuODk1MTQ4IDEyOC4zNzczMzEgMTM1LjE0ODQxMi0xMzIuODkyODkgNDQuOTgzOTk1IDQyLjcyMTctMTM1LjE1MjkyNyAxMzIuODk1MTQ4IDEyMy44NjQwMzEgMTI2LjExOTU1Mkw3MzQuOTQzMjg5IDY4Ni4xMDc1MjIgNzM0Ljk0MzI4OSA2ODYuMTA3NTIyeiIgcC1pZD0iNTg0NCI+PC9wYXRoPjwvc3ZnPg==) no-repeat center center;
     background-size: 0.48rem;
 }
