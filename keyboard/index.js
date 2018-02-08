@@ -561,6 +561,11 @@ class CxyKeyboard {
 
         if (excludeRule && excludeRule.test(newValue)) {
             // 当前输入的内容不合法，所以不修改内容
+
+            if (this.cursorIndex !== undefined) {
+                // 如果光标位置存在 则还原光标位置
+                this.cursorIndex -= 1; // 将光标位置-1
+            }
         } else {
             this.value = newValue;
             this.dispatchEvent('cxyKeyboard_addValue');
