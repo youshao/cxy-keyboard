@@ -52,7 +52,12 @@
                 if (n) {
                     var e = 50 * (n / 375);
                     e = e > 54 ? 54 : e;
-                    t.style.fontSize = e + "px"
+                    t.style.fontSize = e + "px";
+                    var s = getComputedStyle ? getComputedStyle(t, false)['fontSize'] : '';
+                    s = (s.substr(0, s.length - 2)) * 1;
+                    if (s && e !== s) {
+                        t.style.fontSize = e * (e / s) + "px";
+                    }
                 }
             };
             n.addEventListener && (e.addEventListener(i, d, !1), n.addEventListener("DOMContentLoaded", d, !1))
@@ -62,9 +67,10 @@
         window.cxyKeyboard.init({
             inputs: [{
                 selectors: '#carNumberKeyboard',
-                placeholder: '车牌号码键盘(限制了长度为8，且选择车牌前缀后自动切换成字母键盘，只自动切换一次)',
+                placeholder: '车牌号码键盘(有完成按钮，限制了长度为8，且选择车牌前缀后自动切换成字母键盘，只自动切换一次)',
                 type: 'carNumberPre',
                 maxLength: 8,
+                showDoneBtn: true,
             }, {
                 selectors: '#numberKeyboard',
                 placeholder: '数字键盘（限制了长度为11）',
@@ -73,17 +79,20 @@
                 maxLength: 11,
             }, {
                 selectors: '#digitKeyboard',
-                placeholder: '带小数点的数字键盘',
+                placeholder: '带小数点的数字键盘（只能输入一个小数点，有完成按钮）',
                 type: 'digit',
+                excludeRule: /\.{1}\d*\.+\d*/i, // 排除的正则规则
+                showDoneBtn: true,
             }, {
                 selectors: '#idcardKeyboard',
                 placeholder: '身份证输入键盘',
                 type: 'idcard',
             }, {
                 selectors: '#urlKeyboard',
-                placeholder: 'URL键盘（限制长度为100）',
+                placeholder: 'URL键盘（限制长度为100，有完成按钮）',
                 type: 'url',
                 maxLength: 100,
+                showDoneBtn: true,
             }]
         });
 

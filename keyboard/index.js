@@ -223,7 +223,7 @@ class CxyKeyboard {
                                 value: item,
                                 className: styles.aBox,
                                 boxClassName: styles.aBoxBox
-                                
+
                             }
                         case 'SWITCH_URL':
                             return {
@@ -433,7 +433,7 @@ class CxyKeyboard {
         this.showParam = this.inputs[selectors];
         this.value = this.inputs[selectors].value;
 
-        const { type, animation, backgroundColor } = this.showParam;
+        const { type, animation, backgroundColor, showDoneBtn } = this.showParam;
 
         // 处于显示状态时并且不是切换键盘，则不重新渲染
         if (this.isShow && !isSwitch) {
@@ -448,6 +448,9 @@ class CxyKeyboard {
 
         const ele = this.createEle(this.domId, 'div', `
                 <div class="${styles.keyboard}">
+                    <div class="${showDoneBtn ? styles.doneBox + (animation ? ' ' + styles.showDoneBox : '') : styles.hide}">
+                        <span class="${styles.doneBtn}" keyboard-hide="done">完成</span>
+                    </div>
                     <div class="${styles.keys + (animation ? ' ' + styles.showKeys : '')}">
                         ${this.getKeysDomString(type)}
                     </div>
@@ -473,7 +476,12 @@ class CxyKeyboard {
         this.setInputValue({ showCursor: false });
 
         const dom = this.getKeyboardDom();
+        const doneBox = document.getElementsByClassName(styles.doneBox)[0]; // 完成栏的dom元素
         if (dom) {
+            if (doneBox) {
+                // 存在完成栏
+                doneBox.className += ' ' + styles.hideDoneBox;
+            }
             dom.className += ' ' + styles.hideKeys; // 隐藏动画
             this.removeKeyboardDomId = setTimeout(() => {
                 dom.remove(); // 移除键盘Dom元素
@@ -527,23 +535,36 @@ class CxyKeyboard {
     addValue(value) {
         const { maxLength } = this.showParam;
 
-        if (this.value.length >= maxLength) {
+        // 返回新的value
+        let newValue = this.value;
+
+        if (newValue.length >= maxLength) {
             return false; // 禁止写入
         }
+
         // 如果光标位置存在
         if (this.cursorIndex !== undefined) {
             if (this.cursorIndex < 0) {
-                this.value = value + this.value;
+                newValue = value + newValue;
             } else {
-                this.value = this.value.slice(0, this.cursorIndex + 1) + value + this.value.slice(this.cursorIndex + 1);
+                newValue = newValue.slice(0, this.cursorIndex + 1) + value + newValue.slice(this.cursorIndex + 1);
             }
 
             this.cursorIndex += 1; // 将光标位置+1
 
         } else {
-            this.value += value;
+            newValue += value;
         }
-        this.dispatchEvent('cxyKeyboard_addValue');
+
+        // 匹配排除的约束规则
+        const { excludeRule } = this.inputs[this.activeId];
+
+        if (excludeRule && excludeRule.test(newValue)) {
+            // 当前输入的内容不合法，所以不修改内容
+        } else {
+            this.value = newValue;
+            this.dispatchEvent('cxyKeyboard_addValue');
+        }
     }
 
     /**
@@ -608,6 +629,11 @@ class CxyKeyboard {
 
         // 隐藏键盘
         if (attributes['keyboard-hide']) {
+            if (attributes['keyboard-hide'] === 'done') {
+                // 点击完成按钮
+                this.hide();
+                this.dispatchEvent('cxyKeyboard_done');
+            }
             return this.hideKeyboard = true;
         }
 

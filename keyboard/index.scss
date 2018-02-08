@@ -3,6 +3,11 @@
 // 字体
 $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 
+// 隐藏
+.hide{
+    display: none;
+}
+
 // 透明背景 用于兼容在UIwebView下 点击空白处时 document.documentElement.addEventListener监听无效
 .transparentBg{
     position: fixed;
@@ -30,6 +35,40 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     right: 0;
     bottom: -100px;
     z-index: 9990;
+}
+
+// 完成栏
+.doneBox{
+    position: fixed;
+    left: 50%;
+    right: 0;
+    bottom: 430px;
+    right: 0;
+    height: 80px;
+    line-height: 80px;
+    width: 100%;
+    max-width: 540PX;
+    transform: translateX(-50%);
+    background: #f0f1f2;
+    color: #000;
+    border-top: 1PX solid #c0c2c5;
+    z-index: 9998; // 避免像素计算错误 或是隐藏时 挡在键盘的前面
+}
+.doneBtn{
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 30px;
+    font-size: 28px;
+    color: #007aff;
+}
+
+// 完成栏动画
+.showDoneBox{
+    animation: showDoneBox .3s;
+}
+.hideDoneBox{
+    animation: hideDoneBox .3s forwards;
 }
 
 // 键盘按键
@@ -216,6 +255,23 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
 }
 
 // 动画
+@keyframes showDoneBox{
+    0%{
+        bottom: -450px;
+    }
+    100%{
+        bottom: 430px;
+    }
+}
+@keyframes hideDoneBox{
+    0%{
+        bottom: 430px;
+    }
+    100%{
+        bottom: -450px;
+    }
+}
+
 @keyframes showKeyboard{
     0%{
         bottom: -450px;

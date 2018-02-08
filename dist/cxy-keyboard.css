@@ -1,6 +1,10 @@
 
 
 /* 字体*/
+/* 隐藏*/
+.ys-keyboard-hide{
+    display: none;
+}
 /* 透明背景 用于兼容在UIwebView下 点击空白处时 document.documentElement.addEventListener监听无效*/
 .ys-keyboard-transparentBg{
     position: fixed;
@@ -28,6 +32,41 @@
     right: 0;
     bottom: -1rem;
     z-index: 9990;
+}
+/* 完成栏*/
+.ys-keyboard-doneBox{
+    position: fixed;
+    left: 50%;
+    right: 0;
+    bottom: 4.3rem;
+    right: 0;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    width: 100%;
+    max-width: 540PX;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    background: #f0f1f2;
+    color: #000;
+    border-top: 1PX solid #c0c2c5;
+    z-index: 9998; /* 避免像素计算错误 或是隐藏时 挡在键盘的前面*/
+}
+.ys-keyboard-doneBtn{
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 0.3rem;
+    font-size: 0.28rem;
+    color: #007aff;
+}
+/* 完成栏动画*/
+.ys-keyboard-showDoneBox{
+    -webkit-animation: ys-keyboard-showDoneBox .3s;
+            animation: ys-keyboard-showDoneBox .3s;
+}
+.ys-keyboard-hideDoneBox{
+    -webkit-animation: ys-keyboard-hideDoneBox .3s forwards;
+            animation: ys-keyboard-hideDoneBox .3s forwards;
 }
 /* 键盘按键*/
 .ys-keyboard-keys{
@@ -197,6 +236,38 @@
     left: 0;
 }
 /* 动画*/
+@-webkit-keyframes ys-keyboard-showDoneBox{
+    0%{
+        bottom: -4.5rem;
+    }
+    100%{
+        bottom: 4.3rem;
+    }
+}
+@keyframes ys-keyboard-showDoneBox{
+    0%{
+        bottom: -4.5rem;
+    }
+    100%{
+        bottom: 4.3rem;
+    }
+}
+@-webkit-keyframes ys-keyboard-hideDoneBox{
+    0%{
+        bottom: 4.3rem;
+    }
+    100%{
+        bottom: -4.5rem;
+    }
+}
+@keyframes ys-keyboard-hideDoneBox{
+    0%{
+        bottom: 4.3rem;
+    }
+    100%{
+        bottom: -4.5rem;
+    }
+}
 @-webkit-keyframes ys-keyboard-showKeyboard{
     0%{
         bottom: -4.5rem;
