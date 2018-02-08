@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta name="Cache-Control" content="private">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="minimum-scale=1, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>H5键盘demo</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+        }
+
+        div {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+            font-size: 16px;
+        }
+
+        .input {
+            margin: 20px auto;
+            width: 80%;
+            padding: 2px;
+            min-height: 20px;
+            overflow: auto;
+            word-break: break-all;
+            border: 1px solid #000;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="carNumberKeyboard" class="input" onclick="show('#carNumberKeyboard')"></div>
+    <div id="numberKeyboard" class="input" onclick="show('#numberKeyboard')"></div>
+    <div id="digitKeyboard" class="input" onclick="show('#digitKeyboard')"></div>
+    <div id="idcardKeyboard" class="input" onclick="show('#idcardKeyboard')"></div>
+    <div id="urlKeyboard" class="input" onclick="show('#urlKeyboard')"></div>
+	
+	<link type="text/css" rel="Stylesheet" href="https://oss.cx580.com/public_script/cxy-keyboard-1.3.0/cxy-keyboard.css">
+    <script src="https://oss.cx580.com/public_script/cxy-keyboard-1.3.0/cxy-keyboard.js"></script>
+    <script>
+        // 根据屏幕宽度自动设置页面的字体大小
+        !function (n, e) {
+            var t = n.documentElement, i = "orientationchange" in window ? "orientationchange" : "resize", d = function () {
+                var n = t.clientWidth;
+                if (n) {
+                    var e = 50 * (n / 375);
+                    e = e > 54 ? 54 : e;
+                    t.style.fontSize = e + "px";
+                    var s = getComputedStyle ? getComputedStyle(t, false)['fontSize'] : '';
+                    s = (s.substr(0, s.length - 2)) * 1;
+                    if (s && e !== s) {
+                        t.style.fontSize = e * (e / s) + "px";
+                    }
+                }
+            };
+            n.addEventListener && (e.addEventListener(i, d, !1), n.addEventListener("DOMContentLoaded", d, !1))
+        }(document, window);
+
+        // 实例化键盘
+        window.cxyKeyboard.init({
+            inputs: [{
+                selectors: '#carNumberKeyboard',
+                placeholder: '车牌号码键盘(有完成按钮，限制了长度为8，且选择车牌前缀后自动切换成字母键盘，只自动切换一次)',
+                type: 'carNumberPre',
+                maxLength: 8,
+                showDoneBtn: true,
+            }, {
+                selectors: '#numberKeyboard',
+                placeholder: '数字键盘（限制了长度为11）',
+                type: 'number',
+                value: '13800000000',
+                maxLength: 11,
+            }, {
+                selectors: '#digitKeyboard',
+                placeholder: '带小数点的数字键盘（只能输入一个小数点，有完成按钮）',
+                type: 'digit',
+                excludeRule: /\.{1}\d*\.+\d*/i, // 排除的正则规则
+                showDoneBtn: true,
+            }, {
+                selectors: '#idcardKeyboard',
+                placeholder: '身份证输入键盘',
+                type: 'idcard',
+            }, {
+                selectors: '#urlKeyboard',
+                placeholder: 'URL键盘（限制长度为100，有完成按钮）',
+                type: 'url',
+                maxLength: 100,
+                showDoneBtn: true,
+            }]
+        });
+
+        // 内容发生改变
+        cxyKeyboard.onChange = function (value, activeId) {
+            if (activeId === '#carNumberKeyboard') {
+                if (!window.autoSwitchKeyboard) {
+                    window.autoSwitchKeyboard = true; // 只自动帮用户切换一次键盘
+                    if (value.length === 1) {
+                        // 自动切换成字母键盘
+                        cxyKeyboard.switchKeyboard('ABC');
+                    }
+                }
+            }
+
+            console.log('当前所有输入框的详细信息：', cxyKeyboard.inputs);
+        };
+
+        function show(id) {
+            var isShow = cxyKeyboard.isShow;
+            var param = {
+                selectors: id,
+                animation: !isShow, // 键盘不存在时则显示动画
+            }
+
+            // 键盘如果存在，则切换键盘。不存在则显示键盘
+            cxyKeyboard.show(param, isShow);
+        }
+    </script>
+</body>
+
+</html>
