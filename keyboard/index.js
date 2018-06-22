@@ -409,7 +409,7 @@ class CxyKeyboard {
 
         // pushState 来处理安卓点击后退按钮会关闭webView的问题
         if (this.isAndroid() && !this.isShow) {
-            history.replaceState({ hideKeyboard: true }, "", "");
+            history.replaceState(Object.assign({ hideKeyboard: true }, history.state), "", ""); // 新增隐藏webview的标识符
             history.pushState({}, "", "");
         }
 
