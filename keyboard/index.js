@@ -407,12 +407,6 @@ class CxyKeyboard {
         // 阻止关闭键盘
         this.stopCloseKeyboard();
 
-        // pushState 来处理安卓点击后退按钮会关闭webView的问题
-        if (this.isAndroid() && !this.isShow) {
-            history.replaceState(Object.assign({ hideKeyboard: true }, history.state), "", ""); // 新增隐藏webview的标识符
-            history.pushState({}, "", "");
-        }
-
         // 移除光标
         CxyKeyboard.removeCursor();
 
@@ -467,11 +461,6 @@ class CxyKeyboard {
      * 隐藏键盘
      */
     hide() {
-        // pushState 来处理安卓点击后退按钮的问题
-        if (this.isAndroid() && !this.isShow) {
-            history.back();
-        }
-
         // 隐藏光标
         this.setInputValue({ showCursor: false });
 
@@ -954,7 +943,6 @@ class CxyKeyboard {
 
             // 绑定事件
             document.documentElement.addEventListener('touchstart', CxyKeyboard.handleOtherClick);
-            window.addEventListener('popstate', CxyKeyboard.popstate);
         }
     }
 
@@ -998,16 +986,6 @@ class CxyKeyboard {
                     clearInterval(CxyKeyboard.longPressKeyboardFunId);
                 }
             }, 100); // 每100毫秒 模拟一次按键
-        }
-    }
-
-    /**
-     * 监听路由变化
-     * @param {element} e history对象
-     */
-    static popstate(e) {
-        if (e.state) {
-            if (e.state.hideKeyboard) CxyKeyboard.hide(); // 隐藏
         }
     }
 
