@@ -13,13 +13,16 @@ class CxyKeyboard {
      * @param {string} params.domId 键盘Dom元素的Id 默认：cxyKeyboard
      */
     constructor(params = {}) {
-        const { domId } = params;
+        const { domId, pushState = true } = params;
 
         /** 键盘对象 */
         this.keys = this.defaultKeys();
 
         /** 键盘组件的domId */
         this.domId = domId || 'cxyKeyboard';
+
+        /** 针对安卓机型，是否自动 pushState */
+        this.pushState = !!pushState;
 
         /** 键盘输入的内容 */
         this.value = '';
@@ -55,6 +58,9 @@ class CxyKeyboard {
         /** 判断当前是否可以点击按键 用于避免频繁点击 */
         this.canClickBtn = true;
 
+        /** 适配器（键盘挡住输入框时的处理方式）*/
+        this.adapter = {};
+
         /** 保存所有input框在显示键盘时的接收到的参数 */
         this.inputs = {};
 
@@ -66,6 +72,11 @@ class CxyKeyboard {
      * 初始化
      * @param {object} params 参数
      * @param {string} params.domId 键盘Dom元素的Id 默认：cxyKeyboard
+     * @param {object} params.adapter 适配器（键盘挡住输入框时的处理方式）
+     * @param {string} params.adapter.type auto: 自适应。默认：无
+     * @param {string} params.adapter.element 键盘挡住输入框时需要上移的节点，一般设置表单的父元素
+     * @param {string} params.adapter.spaceDistance 节点上移后输入框与键盘的间隙，单位：px
+     * @param {boolean} params.adapter.animation 动画效果 默认：无
      * @param {inputArray} params.inputs placeholder数组
      * @param {string} param.input.selectors css选择器（不支持选input或textarea等输入标签，因为这些标签会调起系统键盘）
      * @param {string} param.input.type 键盘的类型 默认：ABC（字母数字键盘）
@@ -76,10 +87,16 @@ class CxyKeyboard {
      * @param {string} param.input.placeholderColor placeholder的字体颜色，支持css所支持的字符串
      */
     init(params = {}) {
-        const { domId, inputs } = params;
+        const { domId, adapter, inputs, pushState = true } = params;
 
         /** 键盘组件的domId */
         this.domId = domId || 'cxyKeyboard';
+
+        /** 适配方式 */
+        this.adapter = adapter;
+
+        /** 针对安卓机型，是否自动 pushState */
+        this.pushState = !!pushState;
 
         // 初始化输入框
         this.inputsInit(inputs);
@@ -187,7 +204,7 @@ class CxyKeyboard {
             carNumberPre: ['京', '津', '渝', '沪', '冀', '晋', '辽', '吉', '黑', '苏',
                 '浙', '皖', '闽', '赣', '鲁', '豫', '鄂', '湘', '粤', '琼',
                 '川', '贵', '云', '陕', '甘', '青', '蒙', '桂', '宁', '新',
-                'ABC', '藏', '使', '领', '警', '学', '港', '澳', 'DEL'].map(item => {
+                'ABC', '藏', '使', '领', '挂', '学', '港', '澳', 'DEL'].map(item => {
                     switch (item) {
                         case 'ABC':
                             return {
@@ -212,7 +229,7 @@ class CxyKeyboard {
                 }),
 
             // url键盘 小写字母+符号
-            url: ['.', '#', '&', '?', ':', '/', '@', '-', '_', '=',
+            url: ['.', '#', '&', '?', '*', '/', '@', '-', '_', '=',
                 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
                 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
                 'SWITCH_URL', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'DEL'].map(item => {
@@ -290,7 +307,7 @@ class CxyKeyboard {
      */
     addKeys(obj) {
         if (obj && Object.keys(obj).length === 1) {
-            // 检测对象是否存在 以及对象是否合法 
+            // 检测对象是否存在 以及对象是否合法
             const key = Object.keys(obj)[0];
             this.keys[key] = obj[key]; // 覆盖或是新增键盘
         } else {
@@ -391,11 +408,18 @@ class CxyKeyboard {
     }
 
     /**
+     * 允许自动触发 pushState 来修改 history
+     */
+    canPushState() {
+        return this.pushState && this.isAndroid() && !this.isShow;
+    }
+
+    /**
      * 显示键盘
      * @param {object} param 参数
      * @param {string} param.selectors css选择器（不支持选input或textarea等输入标签，因为这些标签会调起系统键盘）
      * @param {string} param.type 键盘的类型 默认：ABC（字母数字键盘）
-     * @param {boolean} param.animation 显示动画 默认键盘非显示状态时显示动画，键盘处于显示状态时不显示动画 
+     * @param {boolean} param.animation 显示动画 默认键盘非显示状态时显示动画，键盘处于显示状态时不显示动画
      * @param {string} param.value 已经输入的内容
      * @param {string} param.backgroundColor 蒙层背景色 不传时 不显示背景 支持css所支持的数值 例如（rgba(0,0,0,1)、#FFF)
      * @param {string} param.placeholder 无输入时的提示
@@ -406,6 +430,12 @@ class CxyKeyboard {
     show(param = {}, isSwitch = false) {
         // 阻止关闭键盘
         this.stopCloseKeyboard();
+
+        // pushState 来处理安卓点击后退按钮会关闭webView的问题
+        if (this.canPushState()) {
+            history.replaceState(history.state ? { ...history.state, hideKeyboard: true } : { hideKeyboard: true }, "", "");
+            history.pushState({}, "", "");
+        }
 
         // 移除光标
         CxyKeyboard.removeCursor();
@@ -450,7 +480,10 @@ class CxyKeyboard {
                     </div>
                     ${ backgroundColor ? `<div class="${styles.keyboardBg}" keyboard-hide="1" style="background:${backgroundColor}" ></div>` : ''}
                 </div>
-            `)
+            `);
+
+        // 页面上移
+        this.pageMoveUp();
 
         this.dispatchEvent('cxyKeyboard_show');
 
@@ -461,6 +494,11 @@ class CxyKeyboard {
      * 隐藏键盘
      */
     hide() {
+        // pushState 来处理安卓点击后退按钮的问题
+        if (this.canPushState()) {
+            history.back();
+        }
+
         // 隐藏光标
         this.setInputValue({ showCursor: false });
 
@@ -475,6 +513,7 @@ class CxyKeyboard {
             this.removeKeyboardDomId = setTimeout(() => {
                 dom.remove(); // 移除键盘Dom元素
                 this.reset(); // 重置
+                this.pageMoveDown();
                 this.dispatchEvent('cxyKeyboard_hide');
             }, 300); // 延迟300毫秒删除键盘 等待动画结束
         }
@@ -515,6 +554,44 @@ class CxyKeyboard {
         const param = Object.assign({}, this.showParam, { type, value: this.value, animation: false });
         this.show(param, true);
         this.dispatchEvent('cxyKeyboard_switchKeyboard');
+    }
+
+    /**
+     * 页面向上移动
+     * @return {boolean} 移动结果
+     */
+    pageMoveUp() {
+        if (this.adapter && this.adapter.type === 'auto' && this.adapter.element) {
+            const spaceDistance = this.adapter.spaceDistance > 0 ? parseInt(this.adapter.spaceDistance, 10) : 0;
+            const distance = this.getSafeDistance(spaceDistance);
+            if (distance < 0) {
+                try {
+                    let transform = this.adapter.element.style.transform;
+                    const translateYArr = transform && transform.match(/translateY\((-?[0-9]+)px/);
+                    const translateY = translateYArr && translateYArr[1] || 0;
+                    transform = `translateY(${translateY ? distance + parseInt(translateY, 10) : distance}px)`;
+                    this.adapter.element.style.transform = transform;
+                    if (this.adapter.animation) this.adapter.element.style.transition = 'transform 0.3s';
+                } catch (error) {
+                    console.error(error);
+                    return false;
+                }
+                return true
+            }
+        }
+        return false;
+    }
+
+    /** 
+     * 页面向下移动
+     * @return {boolean} 移动结果
+     */
+    pageMoveDown() {
+        if (this.adapter && this.adapter.type === 'auto' && this.adapter.element) {
+            this.adapter.element.style.transform = '';
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -805,8 +882,8 @@ class CxyKeyboard {
 
             // 输入的内容
             const values = valueArr.map((item, i) =>
-                `<span 
-                    class="${styles.keyValue + (isShowCursor && i === index ? ' ' + cursorClassName : '')}" 
+                `<span
+                    class="${styles.keyValue + (isShowCursor && i === index ? ' ' + cursorClassName : '')}"
                     keyboard-value-index="${i}"
                 >${item}</span>`)
                 .join('');
@@ -822,8 +899,8 @@ class CxyKeyboard {
             } else {
                 p.innerHTML = placeholder
                     ? `
-                    <span 
-                        class="${styles.keyValue + (isShowCursor ? ' ' + styles.cursor + ' ' + styles.leftCursor : '')}" 
+                    <span
+                        class="${styles.keyValue + (isShowCursor ? ' ' + styles.cursor + ' ' + styles.leftCursor : '')}"
                         style="color:${placeholderColor}">${placeholder}</span>`
                     : '';
             }
@@ -872,6 +949,26 @@ class CxyKeyboard {
     }
 
     /**
+     * 获取输入框距离最低高度的距离
+     * @param {number} spaceDistance 输入框与键盘的间隙，单位：px
+     * @return {number} 返回值小于“0”时表示输入框需要上移
+     */
+    getSafeDistance(spaceDistance) {
+        const dom = this.getInputDom(this.activeId);
+        if (dom) {
+            const { top, height } = dom.getBoundingClientRect();
+            const clientH = window.innerHeight || document.documentElement.clientHeight;
+            const clientW = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || screen.width;
+            const fontSize = parseInt(document.documentElement.style.fontSize, 10); // 字体大小
+            const inputDistance = clientH - top - height; // 输入框距离底部的距离
+            const safeDistance = (fontSize > 0 ? fontSize * 5.1 : (clientW / 750 * 510)) + (spaceDistance || 0); // 距离底部的安全距离
+            const distance = inputDistance - safeDistance; // 输入框底部距离最低高度的距离
+            return parseInt(distance, 10);
+        }
+        return 0;
+    }
+
+    /**
      * inputs初始化
      * @param {inputArray} inputs placeholder数组
      */
@@ -900,11 +997,11 @@ class CxyKeyboard {
         const u = navigator.userAgent;
         //app = navigator.appVersion;
         return {
-            versions: { //移动终端浏览器版本信息 
-                ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端 
-                iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器 
-                iPad: u.indexOf('iPad') > -1, //是否iPad 
-                android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1 //android终端或uc浏览器 
+            versions: { //移动终端浏览器版本信息
+                ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+                iPad: u.indexOf('iPad') > -1, //是否iPad
+                android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1 //android终端或uc浏览器
             }
         }
     }
@@ -943,6 +1040,7 @@ class CxyKeyboard {
 
             // 绑定事件
             document.documentElement.addEventListener('touchstart', CxyKeyboard.handleOtherClick);
+            window.addEventListener('popstate', CxyKeyboard.popstate);
         }
     }
 
@@ -986,6 +1084,16 @@ class CxyKeyboard {
                     clearInterval(CxyKeyboard.longPressKeyboardFunId);
                 }
             }, 100); // 每100毫秒 模拟一次按键
+        }
+    }
+
+    /**
+     * 监听路由变化
+     * @param {element} e history对象
+     */
+    static popstate(e) {
+        if (e.state) {
+            if (e.state.hideKeyboard) CxyKeyboard.hide(); // 隐藏
         }
     }
 

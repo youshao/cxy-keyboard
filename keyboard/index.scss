@@ -42,9 +42,9 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     position: fixed;
     left: 50%;
     right: 0;
-    bottom: 430px;
+    bottom: 420px;
     right: 0;
-    height: 80px;
+    height: 90px;
     line-height: 80px;
     width: 100%;
     max-width: 540PX;
@@ -68,7 +68,7 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     animation: showDoneBox .3s;
 }
 .hideDoneBox{
-    animation: hideDoneBox .3s forwards;
+    opacity: 0; // 直接隐藏，而不执行动画，避免点击穿透
 }
 
 // 键盘按键
@@ -85,7 +85,7 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     background: #d1d5da;
     color: #000;
     z-index: 9999;
-    
+
     &::after{
         content: '';
         display: block;
@@ -142,7 +142,7 @@ $font-family-zh: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Mi
     margin-left: 5%;
 }
 .aBox{
-    
+
 }
 
 // 特殊按键

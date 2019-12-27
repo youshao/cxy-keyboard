@@ -38,11 +38,13 @@
 </head>
 
 <body>
-    <div id="carNumberKeyboard" class="input" onclick="show('#carNumberKeyboard')"></div>
-    <div id="numberKeyboard" class="input" onclick="show('#numberKeyboard')"></div>
-    <div id="digitKeyboard" class="input" onclick="show('#digitKeyboard')"></div>
-    <div id="idcardKeyboard" class="input" onclick="show('#idcardKeyboard')"></div>
-    <div id="urlKeyboard" class="input" onclick="show('#urlKeyboard')"></div>
+    <div id="autoAdapter">
+        <div id="carNumberKeyboard" class="input" onclick="show('#carNumberKeyboard')"></div>
+        <div id="numberKeyboard" class="input" onclick="show('#numberKeyboard')"></div>
+        <div id="digitKeyboard" class="input" onclick="show('#digitKeyboard')"></div>
+        <div id="idcardKeyboard" class="input" onclick="show('#idcardKeyboard')"></div>
+        <div id="urlKeyboard" class="input" onclick="show('#urlKeyboard')"></div>
+    </div>
 	
 	<link type="text/css" rel="Stylesheet" href="https://oss.cx580.com/public_script/cxy-keyboard-1.3.0/cxy-keyboard.css">
     <script src="https://oss.cx580.com/public_script/cxy-keyboard-1.3.0/cxy-keyboard.js"></script>
@@ -67,6 +69,13 @@
 
         // 实例化键盘
         window.cxyKeyboard.init({
+            adapter: {
+                // 适配器（键盘挡住输入框时的处理方式）
+                type: 'auto', // auto: 自适应。默认：无
+                element: document.getElementById('autoAdapter'), // 键盘挡住输入框时需要上移的节点，一般设置表单的父元素
+                spaceDistance: 50, // 节点上移后输入框与键盘的间隙，单位：px
+                animation: true, // 动画效果 默认：无
+            }, 
             inputs: [{
                 selectors: '#carNumberKeyboard',
                 placeholder: '车牌号码键盘(有完成按钮，限制了长度为8，且选择车牌前缀后自动切换成字母键盘，只自动切换一次)',

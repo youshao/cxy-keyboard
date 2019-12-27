@@ -38,9 +38,9 @@
     position: fixed;
     left: 50%;
     right: 0;
-    bottom: 4.3rem;
+    bottom: 4.2rem;
     right: 0;
-    height: 0.8rem;
+    height: 0.9rem;
     line-height: 0.8rem;
     width: 100%;
     max-width: 540PX;
@@ -65,8 +65,7 @@
             animation: ys-keyboard-showDoneBox .3s;
 }
 .ys-keyboard-hideDoneBox{
-    -webkit-animation: ys-keyboard-hideDoneBox .3s forwards;
-            animation: ys-keyboard-hideDoneBox .3s forwards;
+    opacity: 0; /* 直接隐藏，而不执行动画，避免点击穿透*/
 }
 /* 键盘按键*/
 .ys-keyboard-keys{
@@ -136,7 +135,7 @@
     margin-left: 5%;
 }
 .ys-keyboard-aBox{
-    
+
 }
 /* 特殊按键*/
 .ys-keyboard-noneBtn, .ys-keyboard-abcBox, .ys-keyboard-delBtn, .ys-keyboard-backBtn, .ys-keyboard-switchBtn{
