@@ -42,8 +42,18 @@
         <div id="carNumberKeyboard" class="input" onclick="show('#carNumberKeyboard')"></div>
         <div id="numberKeyboard" class="input" onclick="show('#numberKeyboard')"></div>
         <div id="digitKeyboard" class="input" onclick="show('#digitKeyboard')"></div>
-        <div id="idcardKeyboard" class="input" onclick="show('#idcardKeyboard')"></div>
+        <div id="idcardKeyboard" class="input" onclick="show('#idcardKeyxboard')"></div>
         <div id="urlKeyboard" class="input" onclick="show('#urlKeyboard')"></div>
+        <div id="carNumberKeyboard2" class="input" onclick="show('#carNumberKeyboard2')"></div>
+        <div id="numberKeyboard2" class="input" onclick="show('#numberKeyboard2')"></div>
+        <div id="digitKeyboard2" class="input" onclick="show('#digitKeyboard2')"></div>
+        <div id="idcardKeyboard2" class="input" onclick="show('#idcardKeyboard2')"></div>
+        <div id="urlKeyboard2" class="input" onclick="show('#urlKeyboard2')"></div>
+        <div id="carNumberKeyboard3" class="input" onclick="show('#carNumberKeyboard3')"></div>
+        <div id="numberKeyboard3" class="input" onclick="show('#numberKeyboard3')"></div>
+        <div id="digitKeyboard3" class="input" onclick="show('#digitKeyboard3')"></div>
+        <div id="idcardKeyboard3" class="input" onclick="show('#idcardKeyboard3')"></div>
+        <div id="urlKeyboard3" class="input" onclick="show('#urlKeyboard3')"></div>
     </div>
 
     <!-- <script src='./dist/bundle.js'></script> -->
@@ -99,6 +109,62 @@
             }, {
                 selectors: '#urlKeyboard',
                 placeholder: 'URL键盘（限制长度为100，有完成按钮）',
+                type: 'url',
+                maxLength: 100,
+                showDoneBtn: true,
+            }, {
+                selectors: '#carNumberKeyboard2',
+                placeholder: '输入框2，键盘挡住时会自动上移',
+                type: 'carNumberPre',
+                maxLength: 8,
+                showDoneBtn: true,
+            }, {
+                selectors: '#numberKeyboard2',
+                placeholder: '输入框2，键盘挡住时会自动上移',
+                type: 'number',
+                value: '13800000000',
+                maxLength: 11,
+            }, {
+                selectors: '#digitKeyboard2',
+                placeholder: '输入框2，键盘挡住时会自动上移',
+                type: 'digit',
+                excludeRule: /\.{1}\d*\.+\d*/i, // 排除的正则规则
+                showDoneBtn: true,
+            }, {
+                selectors: '#idcardKeyboard2',
+                placeholder: '输入框2，键盘挡住时会自动上移',
+                type: 'idcard',
+            }, {
+                selectors: '#urlKeyboard2',
+                placeholder: '输入框2，键盘挡住时会自动上移',
+                type: 'url',
+                maxLength: 100,
+                showDoneBtn: true,
+            }, {
+                selectors: '#carNumberKeyboard3',
+                placeholder: '输入框3，键盘挡住时会自动上移',
+                type: 'carNumberPre',
+                maxLength: 8,
+                showDoneBtn: true,
+            }, {
+                selectors: '#numberKeyboard3',
+                placeholder: '输入框3，键盘挡住时会自动上移',
+                type: 'number',
+                value: '13800000000',
+                maxLength: 11,
+            }, {
+                selectors: '#digitKeyboard3',
+                placeholder: '输入框3，键盘挡住时会自动上移',
+                type: 'digit',
+                excludeRule: /\.{1}\d*\.+\d*/i, // 排除的正则规则
+                showDoneBtn: true,
+            }, {
+                selectors: '#idcardKeyboard3',
+                placeholder: '输入框3，键盘挡住时会自动上移',
+                type: 'idcard',
+            }, {
+                selectors: '#urlKeyboard3',
+                placeholder: '输入框3，键盘挡住时会自动上移',
                 type: 'url',
                 maxLength: 100,
                 showDoneBtn: true,
